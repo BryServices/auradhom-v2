@@ -50,8 +50,7 @@ export class CustomerService {
             !!customer.address &&
             !!customer.department &&
             !!customer.city &&
-            !!customer.district &&
-            !!customer.phone;
+            !!customer.district;
     }
 
     generateOrderId(): string {
@@ -103,7 +102,6 @@ Adresse complète : ${customer.address}
 Département : ${deptName}
 Ville : ${cityName}
 Quartier : ${customer.district}
-Téléphone : ${customer.phone}
 
 Bienvenue dans la famille, et merci pour votre commande.
 Ne dis rien. Sois. AURADHOM`;

@@ -25,6 +25,8 @@ export class CustomerInfoComponent implements OnInit {
     private cartService = inject(CartService);
     private router = inject(Router);
     
+    showSummary = false;
+
     constructor() {
         this.customerForm = this.fb.group({
             firstName: ['', Validators.required],
@@ -32,8 +34,7 @@ export class CustomerInfoComponent implements OnInit {
             address: ['', Validators.required],
             department: ['', Validators.required],
             city: ['', Validators.required],
-            district: ['', Validators.required],
-            phone: ['+242 ', [Validators.required, Validators.pattern(/^\+242 [0-9]{8}$/)]]
+            district: ['', Validators.required]
         });
     }
 
@@ -41,7 +42,7 @@ export class CustomerInfoComponent implements OnInit {
         this.departments = this.customerService.getDepartments();
         
         // Charger les informations client si elles existent
-        this.customerService.getCustomerInfo().subscribe(customer => {
+        this.customerService.getCustomerInfo().subscribe((customer: any) => {
             if (customer) {
                 this.customerForm.patchValue(customer);
                 this.onDepartmentChange();
@@ -81,40 +82,66 @@ export class CustomerInfoComponent implements OnInit {
         }
     }
 
+    getFormattedValue(controlName: string): string {
+        const value = this.customerForm.get(controlName)?.value;
+        if (!value) return '-';
+        
+        if (controlName === 'department') {
+            const dept = this.departments.find(d => d.id === value);
+            return dept ? dept.name : value;
+        }
+        
+        if (controlName === 'city') {
+            const city = this.cities.find(c => c.id === value);
+            return city ? city.name : value;
+        }
+        
+        return value;
+    }
+
     onSubmit(): void {
         if (this.customerForm.valid) {
-            // Sauvegarder les informations client
-            this.customerService.setCustomerInfo(this.customerForm.value);
-            
-            // Récupérer les articles du panier
-            const cartItems = this.cartService.getItems()();
-            if (!cartItems.length) {
-                this.router.navigate(['/panier']);
-                return;
-            }
-
-            // Préparer les données de commande
-            const orderData = {
-                items: cartItems,
-                subtotal: this.cartService.getSubtotal(),
-                shippingCost: this.cartService.getShippingCost(),
-                total: this.cartService.total()
-            };
-
-            // Générer le message WhatsApp et rediriger
-            const message = this.customerService.formatWhatsAppMessage(orderData);
-            const whatsappLink = this.customerService.getWhatsAppLink(message);
-            window.open(whatsappLink, '_blank');
-            
-            // Rediriger vers la page de confirmation après un court délai
-            setTimeout(() => {
-                this.router.navigate(['/envoye']);
-            }, 500);
+            // Afficher le récapitulatif avant de soumettre
+            this.showSummary = true;
         } else {
             // Marquer tous les champs comme touchés pour afficher les erreurs
             Object.keys(this.customerForm.controls).forEach(key => {
                 this.customerForm.get(key)?.markAsTouched();
             });
         }
+    }
+
+    confirmOrder(): void {
+        // Sauvegarder les informations client
+        this.customerService.setCustomerInfo(this.customerForm.value);
+        
+        // Récupérer les articles du panier
+        const cartItems = this.cartService.getItems()();
+        if (!cartItems.length) {
+            this.router.navigate(['/panier']);
+            return;
+        }
+
+        // Préparer les données de commande
+        const orderData = {
+            items: cartItems,
+            subtotal: this.cartService.getSubtotal(),
+            shippingCost: this.cartService.getShippingCost(),
+            total: this.cartService.total()
+        };
+
+        // Générer le message WhatsApp et rediriger
+        const message = this.customerService.formatWhatsAppMessage(orderData);
+        const whatsappLink = this.customerService.getWhatsAppLink(message);
+        window.open(whatsappLink, '_blank');
+        
+        // Rediriger vers la page de confirmation après un court délai
+        setTimeout(() => {
+            this.router.navigate(['/envoye']);
+        }, 500);
+    }
+
+    editInfo(): void {
+        this.showSummary = false;
     }
 }

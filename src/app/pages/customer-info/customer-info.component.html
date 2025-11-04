@@ -1,7 +1,11 @@
 <div class="customer-form-container container fade-in">
-    <h2 class="form-title">Informations de livraison</h2>
+    <div class="form-header">
+        <h2 class="form-title">Informations de livraison</h2>
+        <p class="form-subtitle">Remplissez les champs ci-dessous pour finaliser votre commande</p>
+    </div>
     
-    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+    @if (!showSummary) {
+        <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="customer-form">
         <div class="form-group">
             <label class="form-label" for="lastName">Nom</label>
             <input 
@@ -25,19 +29,6 @@
                 [class.is-invalid]="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched">
             @if (customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched) {
                 <div class="error-message">Le prénom est requis</div>
-            }
-        </div>
-
-        <div class="form-group">
-            <label class="form-label" for="phone">Téléphone</label>
-            <input 
-                id="phone"
-                type="tel"
-                class="form-control"
-                formControlName="phone"
-                [class.is-invalid]="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
-            @if (customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched) {
-                <div class="error-message">Numéro de téléphone invalide (format: +242 XXXXXXXX)</div>
             }
         </div>
 
@@ -121,7 +112,51 @@
             type="submit" 
             class="submit-button"
             [disabled]="customerForm.invalid">
-            Valider
+            Vérifier les informations
         </button>
     </form>
+    } @else {
+        <div class="summary-section">
+            <div class="summary-header">
+                <h3>Récapitulatif de vos informations</h3>
+                <p class="summary-subtitle">Vérifiez que tout est correct avant de confirmer</p>
+            </div>
+            
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Nom</span>
+                    <span class="summary-value">{{ getFormattedValue('lastName') }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Prénom</span>
+                    <span class="summary-value">{{ getFormattedValue('firstName') }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Département</span>
+                    <span class="summary-value">{{ getFormattedValue('department') }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Ville</span>
+                    <span class="summary-value">{{ getFormattedValue('city') }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Quartier</span>
+                    <span class="summary-value">{{ getFormattedValue('district') }}</span>
+                </div>
+                <div class="summary-item full-width">
+                    <span class="summary-label">Adresse complète</span>
+                    <span class="summary-value">{{ getFormattedValue('address') }}</span>
+                </div>
+            </div>
+            
+            <div class="summary-actions">
+                <button type="button" class="edit-button" (click)="editInfo()">
+                    Modifier
+                </button>
+                <button type="button" class="confirm-button" (click)="confirmOrder()">
+                    Confirmer la commande
+                </button>
+            </div>
+        </div>
+    }
 </div>
