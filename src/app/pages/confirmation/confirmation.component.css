@@ -4,42 +4,44 @@
   align-items: center;
   text-align: center;
   flex-grow: 1;
+  padding: 16px;
 }
 
 .content {
   max-width: 500px;
+  width: 100%;
 }
 
 .content p {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   line-height: 1.6;
   color: var(--sand);
 }
 
 .tagline {
-  font-size: 1.5rem;
-  margin: 32px 0;
+  font-size: 1.375rem;
+  margin: 24px 0;
 }
 
 .cta-button {
   display: inline-block;
-  margin-top: 16px;
-  padding: 12px 24px;
+  margin-top: 12px;
+  padding: 10px 20px;
   border: 1px solid var(--gray-dark);
   color: var(--sand);
   text-transform: uppercase;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   letter-spacing: 1px;
 }
 
 .contact-line {
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 24px;
+  padding-top: 20px;
   border-top: 1px solid var(--gray-dark);
 }
 
 .contact-line p {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
   line-height: 1.6;
 }
@@ -52,4 +54,40 @@
 
 .contact-line a:hover {
   color: var(--text-secondary);
+}
+
+@media (min-width: 640px) {
+  .confirmation-container {
+    padding: 24px;
+  }
+  
+  .content p {
+    font-size: 1.25rem;
+  }
+  
+  .tagline {
+    font-size: 1.5rem;
+    margin: 32px 0;
+  }
+  
+  .cta-button {
+    margin-top: 16px;
+    padding: 12px 24px;
+    font-size: 0.8rem;
+  }
+  
+  .contact-line {
+    margin-top: 32px;
+    padding-top: 24px;
+  }
+  
+  .contact-line p {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .confirmation-container {
+    padding: 32px;
+  }
 }

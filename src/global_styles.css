@@ -62,10 +62,32 @@ button {
   max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
-  padding: 32px;
+  padding: 16px;
 }
 
+/* Mobile: 640px and up */
+@media (min-width: 640px) {
+  .container {
+    padding: 24px;
+  }
+}
+
+/* Tablette: 768px and up */
 @media (min-width: 768px) {
+  .container {
+    padding: 32px 48px;
+  }
+}
+
+/* Desktop: 1024px and up */
+@media (min-width: 1024px) {
+  .container {
+    padding: 48px 64px;
+  }
+}
+
+/* Large Desktop: 1440px and up */
+@media (min-width: 1440px) {
   .container {
     padding: 64px;
   }
@@ -86,4 +108,53 @@ button {
   min-height: calc(100vh - 160px); /* Adjust based on header/footer height */
   display: flex;
   flex-direction: column;
+}
+
+/* Responsive typography */
+h1 {
+  font-size: 1.75rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 3rem;
+  }
+}
+
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
 }

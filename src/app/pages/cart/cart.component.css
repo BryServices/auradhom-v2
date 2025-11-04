@@ -10,22 +10,38 @@
 
 .cart-item {
   display: grid;
-  grid-template-columns: 80px 1fr auto auto;
-  gap: 16px;
-  align-items: center;
+  grid-template-columns: 64px 1fr;
+  gap: 12px;
+  align-items: start;
   background: #101010;
   border: 1px solid var(--gray-dark);
   border-radius: 12px;
-  padding: 12px 16px;
+  padding: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
   animation: appear 220ms ease;
 }
 
+@media (min-width: 640px) {
+  .cart-item {
+    grid-template-columns: 80px 1fr auto auto;
+    gap: 16px;
+    align-items: center;
+    padding: 12px 16px;
+  }
+}
+
 .cart-item img {
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   object-fit: cover;
   border-radius: 8px;
+}
+
+@media (min-width: 640px) {
+  .cart-item img {
+    width: 80px;
+    height: 80px;
+  }
 }
 
 .cart-item .meta .name {
@@ -40,12 +56,32 @@
 .cart-item .price {
   margin-left: 8px;
   font-weight: 700;
+  grid-column: 2;
+  justify-self: end;
+}
+
+@media (min-width: 640px) {
+  .cart-item .price {
+    grid-column: auto;
+    justify-self: auto;
+  }
 }
 
 .cart-item .remove {
   border: 1px solid var(--gray-dark);
   border-radius: 10px;
   padding: 8px 12px;
+  grid-column: 2;
+  justify-self: end;
+  margin-top: 8px;
+}
+
+@media (min-width: 640px) {
+  .cart-item .remove {
+    grid-column: auto;
+    justify-self: auto;
+    margin-top: 0;
+  }
 }
 
 .qty {
@@ -79,11 +115,17 @@
 
 .cart-footer {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr;
   gap: 24px;
   align-items: start;
   border-top: 1px solid var(--gray-dark);
   padding-top: 24px;
+}
+
+@media (min-width: 768px) {
+  .cart-footer {
+    grid-template-columns: 1fr 360px;
+  }
 }
 
 .cart-footer .continue {
@@ -126,18 +168,6 @@
   font-weight: 700;
 }
 
-@media (max-width: 640px) {
-  .cart-item {
-    grid-template-columns: 64px 1fr;
-  }
-  .cart-item .price, .cart-item button {
-    justify-self: end;
-  }
-
-  .cart-footer {
-    grid-template-columns: 1fr;
-  }
-}
 
 @keyframes appear {
   from { opacity: 0; transform: translateY(8px); }

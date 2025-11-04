@@ -290,13 +290,18 @@ select.form-control option:disabled {
     transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
+/* Mobile: < 640px */
+@media (max-width: 639px) {
     .customer-form-container {
-        padding: 24px;
+        padding: 16px;
     }
 
     .form-title {
-        font-size: 1.5rem;
+        font-size: 1.375rem;
+    }
+    
+    .form-subtitle {
+        font-size: 0.875rem;
     }
 
     .summary-grid {
@@ -310,5 +315,27 @@ select.form-control option:disabled {
     .edit-button,
     .confirm-button {
         width: 100%;
+    }
+}
+
+/* Tablette: 640px - 767px */
+@media (min-width: 640px) and (max-width: 767px) {
+    .customer-form-container {
+        padding: 24px;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop: 768px and up */
+@media (min-width: 768px) {
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }

@@ -1,9 +1,23 @@
 .footer {
-  padding: 32px;
+  padding: 24px 16px;
   text-align: center;
   border-top: 1px solid var(--gray-dark);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--text-secondary);
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+  .footer {
+    padding: 28px 24px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .footer {
+    padding: 32px;
+    font-size: 0.8rem;
+  }
 }

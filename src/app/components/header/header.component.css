@@ -1,10 +1,24 @@
 .header {
-  padding: 24px 32px;
+  padding: 16px 20px;
   position: sticky;
   top: 0;
   background-color: var(--background);
   z-index: 100;
   border-bottom: 1px solid var(--gray-dark);
+}
+
+/* Mobile: 640px and up */
+@media (min-width: 640px) {
+  .header {
+    padding: 20px 24px;
+  }
+}
+
+/* Tablette: 768px and up */
+@media (min-width: 768px) {
+  .header {
+    padding: 24px 32px;
+  }
 }
 
 .header-container {
@@ -17,8 +31,20 @@
 
 .logo a {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
+  font-size: 1rem;
   letter-spacing: 1px;
+}
+
+@media (min-width: 640px) {
+  .logo a {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .logo a {
+    font-size: 1.25rem;
+  }
 }
 
 .desktop-nav {
@@ -69,8 +95,14 @@
 
 .mobile-nav a {
   font-family: var(--font-heading);
-  font-size: 2rem;
+  font-size: 1.75rem;
   color: var(--text-primary);
+}
+
+@media (min-width: 640px) {
+  .mobile-nav a {
+    font-size: 2rem;
+  }
 }
 
 .cart-link-mobile-nav {
@@ -80,16 +112,25 @@
   position: relative;
 }
 
+/* Tablette: 768px and up */
 @media (min-width: 768px) {
   .desktop-nav {
     display: flex;
-    gap: 48px;
-    font-size: 0.9rem;
+    gap: 32px;
+    font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 1px;
   }
   .mobile-nav-toggle, .mobile-nav {
     display: none;
+  }
+}
+
+/* Desktop: 1024px and up */
+@media (min-width: 1024px) {
+  .desktop-nav {
+    gap: 48px;
+    font-size: 0.9rem;
   }
 }
 
