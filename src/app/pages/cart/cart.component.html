@@ -35,7 +35,7 @@
           <span>Total</span>
           <strong>{{ total() | formatFcfa }}</strong>
         </div>
-        <button class="checkout">Procéder au paiement</button>
+        <button class="checkout" (click)="proceedToCheckout()">Commander</button>
       </div>
     </div>
   }

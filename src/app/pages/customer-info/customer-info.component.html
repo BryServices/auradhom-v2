@@ -1,0 +1,120 @@
+<div class="customer-form-container">
+    <h2 class="form-title">Informations de livraison</h2>
+    
+    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label class="form-label" for="lastName">Nom</label>
+            <input 
+                id="lastName"
+                type="text"
+                class="form-control"
+                formControlName="lastName"
+                [class.is-invalid]="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched">
+            <div class="error-message" *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched">
+                Le nom est requis
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="firstName">Prénom</label>
+            <input 
+                id="firstName"
+                type="text"
+                class="form-control"
+                formControlName="firstName"
+                [class.is-invalid]="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched">
+            <div class="error-message" *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched">
+                Le prénom est requis
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="phone">Téléphone</label>
+            <input 
+                id="phone"
+                type="tel"
+                class="form-control"
+                formControlName="phone"
+                [class.is-invalid]="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
+            <div class="error-message" *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
+                Numéro de téléphone invalide (format: +242 XXXXXXXX)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="department">Département</label>
+            <select 
+                id="department"
+                class="form-control"
+                formControlName="department"
+                [class.is-invalid]="customerForm.get('department')?.invalid && customerForm.get('department')?.touched">
+                <option value="">Sélectionnez un département</option>
+                <option *ngFor="let dept of departments" [value]="dept.id">{{dept.name}}</option>
+            </select>
+            <div class="error-message" *ngIf="customerForm.get('department')?.invalid && customerForm.get('department')?.touched">
+                Le département est requis
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="city">Ville</label>
+            <select 
+                id="city"
+                class="form-control"
+                formControlName="city"
+                [class.is-invalid]="customerForm.get('city')?.invalid && customerForm.get('city')?.touched">
+                <option value="">Sélectionnez une ville</option>
+                <option *ngFor="let city of cities" [value]="city.id">{{city.name}}</option>
+            </select>
+            <div class="error-message" *ngIf="customerForm.get('city')?.invalid && customerForm.get('city')?.touched">
+                La ville est requise
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="district">Quartier</label>
+            <select 
+                *ngIf="!customDistrict"
+                id="district"
+                class="form-control"
+                formControlName="district"
+                [class.is-invalid]="customerForm.get('district')?.invalid && customerForm.get('district')?.touched">
+                <option value="">Sélectionnez un quartier</option>
+                <option *ngFor="let district of districts" [value]="district">{{district}}</option>
+            </select>
+            <input 
+                *ngIf="customDistrict"
+                type="text"
+                class="form-control"
+                formControlName="district"
+                placeholder="Saisissez votre quartier"
+                [class.is-invalid]="customerForm.get('district')?.invalid && customerForm.get('district')?.touched">
+            <div class="error-message" *ngIf="customerForm.get('district')?.invalid && customerForm.get('district')?.touched">
+                Le quartier est requis
+            </div>
+            <button type="button" class="custom-district-toggle" (click)="toggleCustomDistrict()">
+                {{ customDistrict ? 'Sélectionner dans la liste' : 'Mon quartier n\'est pas dans la liste' }}
+            </button>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="address">Adresse complète</label>
+            <textarea 
+                id="address"
+                class="form-control"
+                formControlName="address"
+                rows="3"
+                [class.is-invalid]="customerForm.get('address')?.invalid && customerForm.get('address')?.touched"></textarea>
+            <div class="error-message" *ngIf="customerForm.get('address')?.invalid && customerForm.get('address')?.touched">
+                L'adresse est requise
+            </div>
+        </div>
+
+        <button 
+            type="submit" 
+            class="submit-button"
+            [disabled]="customerForm.invalid">
+            Valider
+        </button>
+    </form>
+</div>
