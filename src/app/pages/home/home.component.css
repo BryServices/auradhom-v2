@@ -15,7 +15,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://img-wrapper.vercel.app/image?url=https://placehold.co/1920x1080/000000/1C1C1C.png?text=');
+  background-image: url('/cover.jpg');
   background-size: cover;
   background-position: center;
   filter: grayscale(100%) contrast(1.1);

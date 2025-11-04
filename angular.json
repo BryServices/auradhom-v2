@@ -36,6 +36,16 @@
                   "glob": "**/*",
                   "input": "src/app/infos-T",
                   "output": "/assets/infos-T"
+                },
+                {
+                  "glob": "cover.jpg",
+                  "input": "src",
+                  "output": "/"
+                },
+                {
+                  "glob": "favicon.png",
+                  "input": "src",
+                  "output": "/"
                 }
               ],
               "index": "src/index.html",
