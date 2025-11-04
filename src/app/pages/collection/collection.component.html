@@ -18,7 +18,7 @@
                 [alt]="product.name" 
                 class="product-main-image"
                 [loading]="$index < 3 ? 'eager' : 'lazy'"
-                [fetchpriority]="$index === 0 ? 'high' : 'auto'"
+                [attr.fetchpriority]="$index === 0 ? 'high' : 'auto'"
                 decoding="async">
             </a>
           </div>
