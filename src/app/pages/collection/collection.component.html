@@ -11,18 +11,33 @@
     <div class="product-grid">
       @for(product of filteredProducts(); track product.id) {
         <div class="product-card">
-          <a [routerLink]="['/produit', product.slug]" class="product-link">
-            <img [src]="getPreview(product)" [alt]="product.name">
-            <div class="product-info">
+          <div class="product-image-wrapper">
+            <a [routerLink]="['/produit', product.slug]" class="product-link">
+              <img [src]="getPreview(product)" [alt]="product.name" class="product-main-image">
+            </a>
+          </div>
+          <div class="product-info">
+            <div class="product-details">
               <span class="product-name">{{ product.name }}</span>
-              <span class="product-price">{{ product.price | formatFcfa }}</span>
+              @if(product.colors?.length) {
+                <span class="product-color">{{ product.colors[0].name }}</span>
+              }
+              @if(product.sizes?.length) {
+                <span class="product-sizes">Tailles: {{ product.sizes.join(', ') }}</span>
+              }
             </div>
-          </a>
+            <span class="product-price">{{ product.price | formatFcfa }}</span>
+          </div>
           <div class="thumb-row" aria-label="Galerie">
             @if(thumbsById()[product.id]?.length) {
-              @for(img of thumbsById()[product.id].slice(0,6); track img) {
-                <button type="button" class="thumb" (click)="setPreview(product.id, img)" aria-label="Prévisualiser">
-                  <img [src]="img" alt="Miniature">
+              @for(img of thumbsById()[product.id].slice(0,3); track img; let idx = $index) {
+                <button 
+                  type="button" 
+                  class="thumb" 
+                  [class.active]="getPreview(product) === img"
+                  (click)="setPreview(product.id, img)" 
+                  [attr.aria-label]="'Vue ' + (idx + 1)">
+                  <img [src]="img" [alt]="'Vue ' + (idx + 1)">
                 </button>
               }
             } @else {

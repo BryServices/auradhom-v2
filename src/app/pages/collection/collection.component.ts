@@ -59,13 +59,15 @@ export class CollectionComponent {
       data.forEach(prod => {
         // Par défaut, utilise la première couleur si disponible, sinon l'image du produit
         const firstColor = prod.colors?.[0]?.name;
-        map[prod.id] = firstColor ? this.resolveColorImage(firstColor) : prod.image;
         if (firstColor) {
-          this.preloadService.findColorThumbnails(firstColor).then(imgs => {
-            const next = { ...this.thumbsById() };
-            next[prod.id] = imgs.length ? imgs : [this.resolveColorImage(firstColor)];
-            this.thumbsById.set(next);
-          });
+          // Charger les 3 images pour la première couleur
+          const colorImages = this.preloadService.getColorImages(firstColor);
+          map[prod.id] = colorImages[0] || this.resolveColorImage(firstColor);
+          const next = { ...this.thumbsById() };
+          next[prod.id] = colorImages;
+          this.thumbsById.set(next);
+        } else {
+          map[prod.id] = prod.image;
         }
       });
       this.previewById.set(map);
@@ -89,10 +91,14 @@ export class CollectionComponent {
 
   resolveColorImage(colorName: string): string {
     const name = this.normalizeColorName(colorName);
-    // Préférence au JPG (dossier 1), sinon PNG (dossier 2)
-    // Les deux URLs sont valides côté assets; le navigateur chargera la bonne si elle existe
-    // On retourne le JPG par défaut; si votre set d'images est mixte, vous pouvez tester existence via HEAD
-    return `assets/infos-T/1/${name}.jpg`;
+    // Retourne la première image de la couleur (1.png)
+    return `assets/infos-T/${name}/1.png`;
+  }
+  
+  getColorImages(product: Product): string[] {
+    const firstColor = product.colors?.[0]?.name;
+    if (!firstColor) return [];
+    return this.preloadService.getColorImages(firstColor);
   }
 
   onCheckboxChange(event: Event, controlName: string) {

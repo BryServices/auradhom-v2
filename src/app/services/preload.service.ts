@@ -6,13 +6,11 @@ export class PreloadService {
 
   preloadCollectionImages(): Promise<void> {
     const urls: string[] = [];
-    // Dossier 1: .jpg
+    // Précharger les 3 images par couleur depuis assets/infos-T/[couleur]/[1-3].png
     for (const c of this.colors) {
-      urls.push(`assets/infos-T/1/${c}.jpg`);
-    }
-    // Dossier 2: .png
-    for (const c of this.colors) {
-      urls.push(`assets/infos-T/2/${c}.png`);
+      urls.push(`assets/infos-T/${c}/1.png`);
+      urls.push(`assets/infos-T/${c}/2.png`);
+      urls.push(`assets/infos-T/${c}/3.png`);
     }
     return this.preloadImages(urls).then(() => void 0);
   }
@@ -32,15 +30,32 @@ export class PreloadService {
   findColorThumbnails(colorName: string, maxCount = 8): Promise<string[]> {
     const name = (colorName || '').toString().trim().toLowerCase();
     const candidates: string[] = [];
+    
+    // Charger les 3 images par couleur depuis assets/infos-T/[couleur]/1.png, 2.png, 3.png
+    for (let i = 1; i <= 3; i++) {
+      candidates.push(`assets/infos-T/${name}/${i}.png`);
+      candidates.push(`assets/infos-T/${name}/${i}.jpg`);
+    }
+    
+    // Fallbacks pour compatibilité
     for (let i = 1; i <= maxCount; i++) {
       candidates.push(`assets/infos-T/1/${name}_${i}.png`);
       candidates.push(`assets/infos-T/2/${name}_${i}.png`);
     }
-    // Also try unnumbered as a fallback
     candidates.push(`assets/infos-T/1/${name}.png`);
     candidates.push(`assets/infos-T/2/${name}.png`);
 
     return this.filterExistingImages(candidates);
+  }
+  
+  getColorImages(colorName: string): string[] {
+    const name = (colorName || '').toString().trim().toLowerCase();
+    // Retourne directement les 3 images attendues
+    return [
+      `assets/infos-T/${name}/1.png`,
+      `assets/infos-T/${name}/2.png`,
+      `assets/infos-T/${name}/3.png`
+    ];
   }
 
   private filterExistingImages(urls: string[]): Promise<string[]> {
