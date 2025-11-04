@@ -82,17 +82,6 @@
             </div>
           }
         </div>
-        <div class="accordion-item">
-          <button class="accordion-header" (click)="toggleAccordion('provenance')">
-            <span>Provenance</span>
-            <span>{{ openAccordion() === 'provenance' ? '-' : '+' }}</span>
-          </button>
-          @if(openAccordion() === 'provenance') {
-            <div class="accordion-content">
-              <p>{{ p.details.origin }}</p>
-            </div>
-          }
-        </div>
       </div>
     </div>
   </div>
