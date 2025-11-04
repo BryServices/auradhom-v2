@@ -4,9 +4,8 @@ import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product';
 import { FormatFcfaPipe } from '../../pipes/format-fcfa.pipe';
 import { LucideAngularModule } from 'lucide-angular';
-import { Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
-import { OFFICIAL_WA_ME_NUMBER, OFFICIAL_PHONE_DISPLAY } from '../../shared/constants';
+// Note: WhatsApp ordering removed; constants kept for other pages.
 declare const require: any;
 
 @Component({
@@ -20,7 +19,6 @@ export class ProductDetailComponent implements OnChanges, OnInit {
   @Input() slug = '';
   
   private productService = inject(ProductService);
-  private router = inject(Router);
   private cart = inject(CartService);
 
   product = signal<Product | undefined>(undefined);
@@ -88,43 +86,7 @@ export class ProductDetailComponent implements OnChanges, OnInit {
     this.openAccordion.set(this.openAccordion() === section ? null : section);
   }
 
-  orderOnWhatsApp() {
-    const p = this.product();
-    if (!p || !this.selectedSize() || !this.selectedColor()) {
-      alert('Veuillez sélectionner une taille et une couleur.');
-      return;
-    }
-
-    const price = p.price;
-    const qty = this.quantity();
-    const formatFCFA = (n: number) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' FCFA';
-
-    const message = `Bonjour AuraDhom,
-
-Je commande :
-
-• ${p.name} – Taille ${this.selectedSize()}
-• Couleur : ${this.selectedColor()?.name}
-• Quantité : ${qty}
-
-Prix unitaire : ${formatFCFA(price)}
-Total : ${formatFCFA(price * qty)}
-
-Livraison : 0 FCFA
-
-Prénom :
-Adresse complète :
-Code postal / Ville :
-Téléphone :
-
-Merci.
-\nContact: ${OFFICIAL_PHONE_DISPLAY}
-`;
-    const url = `https://wa.me/${OFFICIAL_WA_ME_NUMBER}?text=${encodeURIComponent(message)}`;
-    
-    window.open(url, '_blank');
-    this.router.navigate(['/envoye']);
-  }
+  // WhatsApp ordering removed as per requirements
 
   addToCart() {
     const p = this.product();
