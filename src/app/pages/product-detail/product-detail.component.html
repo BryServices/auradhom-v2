@@ -45,10 +45,6 @@
         </div>
       </div>
 
-      <button class="cta-whatsapp" (click)="orderOnWhatsApp()">
-        <lucide-icon name="smartphone" [size]="16"></lucide-icon>
-        <span>Commande sur WhatsApp</span>
-      </button>
       <div class="quantity-selector">
         <button class="qty-btn" aria-label="Diminuer" (click)="decrementQuantity()">−</button>
         <input type="number" min="1" [value]="quantity()" (input)="onQuantityInput($event)" aria-label="Quantité">

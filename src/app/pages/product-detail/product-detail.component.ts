@@ -1,11 +1,11 @@
-import { Component, Input, computed, inject, signal, OnChanges, SimpleChanges, OnInit } from '@angular/core';
+import { Component, Input, inject, signal, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product';
 import { FormatFcfaPipe } from '../../pipes/format-fcfa.pipe';
 import { LucideAngularModule } from 'lucide-angular';
 import { CartService } from '../../services/cart.service';
-// Note: WhatsApp ordering removed; constants kept for other pages.
+
 declare const require: any;
 
 @Component({
@@ -85,8 +85,6 @@ export class ProductDetailComponent implements OnChanges, OnInit {
   toggleAccordion(section: string) {
     this.openAccordion.set(this.openAccordion() === section ? null : section);
   }
-
-  // WhatsApp ordering removed as per requirements
 
   addToCart() {
     const p = this.product();
