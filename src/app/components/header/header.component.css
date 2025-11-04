@@ -25,6 +25,22 @@
   display: none;
 }
 
+.mobile-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mobile-cart-link {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .mobile-cart-link {
+    display: none;
+  }
+}
+
 .mobile-nav-toggle {
   display: flex;
   flex-direction: column;
