@@ -34,6 +34,15 @@ export class CartService {
     this.writeToStorage();
   }
 
+  updateQuantity(index: number, quantity: number) {
+    const q = Math.max(1, Math.floor(quantity));
+    const items = [...this.items()];
+    if (!items[index]) return;
+    items[index] = { ...items[index], quantity: q };
+    this.items.set(items);
+    this.writeToStorage();
+  }
+
   remove(index: number) {
     const items = [...this.items()];
     items.splice(index, 1);

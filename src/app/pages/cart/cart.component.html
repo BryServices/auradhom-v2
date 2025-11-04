@@ -3,7 +3,7 @@
 
   @if(items().length === 0) {
     <p>Votre panier est vide.</p>
-    <a routerLink="/collection" class="link">Retour à la collection</a>
+    <a routerLink="/collection" class="link">Continuer mes achats</a>
   } @else {
     <ul class="cart-list">
       @for (item of items(); track item.slug + item.size + item.color) {
@@ -12,19 +12,30 @@
           <div class="meta">
             <p class="name">{{ item.name }}</p>
             <p class="sub">Taille {{ item.size }} • {{ item.color }}</p>
-            <p class="sub">Quantité: {{ item.quantity }}</p>
+            <div class="qty">
+              <button class="qty-btn" (click)="decrement($index)" aria-label="Diminuer">−</button>
+              <input type="number" min="1" [value]="item.quantity" (input)="onQtyInput($index, $event)" aria-label="Quantité">
+              <button class="qty-btn" (click)="increment($index)" aria-label="Augmenter">+</button>
+            </div>
           </div>
           <div class="price">{{ (item.price * item.quantity) | formatFcfa }}</div>
-          <button (click)="remove($index)">Supprimer</button>
+          <button class="remove" (click)="remove($index)">Supprimer</button>
         </li>
       }
     </ul>
 
     <div class="cart-footer">
-      <button class="clear" (click)="clear()">Vider le panier</button>
-      <div class="total">
-        <div>Livraison: <strong>0 FCFA</strong></div>
-        <div>Total: <strong>{{ total() | formatFcfa }}</strong></div>
+      <a routerLink="/collection" class="continue">Continuer mes achats</a>
+      <div class="summary">
+        <div class="row">
+          <span>Livraison</span>
+          <strong>0 FCFA</strong>
+        </div>
+        <div class="row total-row">
+          <span>Total</span>
+          <strong>{{ total() | formatFcfa }}</strong>
+        </div>
+        <button class="checkout">Procéder au paiement</button>
       </div>
     </div>
   }
