@@ -5,6 +5,7 @@ import { Product } from '../../models/product';
 import { FormatFcfaPipe } from '../../pipes/format-fcfa.pipe';
 import { LucideAngularModule } from 'lucide-angular';
 import { CartService } from '../../services/cart.service';
+import { PreloadService } from '../../services/preload.service';
 
 declare const require: any;
 
@@ -20,6 +21,7 @@ export class ProductDetailComponent implements OnChanges, OnInit {
   
   private productService = inject(ProductService);
   private cart = inject(CartService);
+  private preload = inject(PreloadService);
 
   product = signal<Product | undefined>(undefined);
   selectedSize = signal<string | undefined>(undefined);
@@ -43,10 +45,13 @@ export class ProductDetailComponent implements OnChanges, OnInit {
         this.product.set(p);
         if (p?.sizes.length === 1) this.selectedSize.set(p.sizes[0]);
         if (p?.colors.length === 1) this.selectedColor.set(p.colors[0]);
-        // Alimente les vignettes à partir des couleurs du produit
+        // Alimente les vignettes à partir des visuels de la couleur principale (trouvée en premier)
         if (p?.colors?.length) {
-          this.productImages = p.colors.map((c: { name: string; hex: string }) => this.resolveColorImage(c.name));
-          this.currentImage = this.productImages[0] || p.image;
+          const mainColor = p.colors[0]?.name ?? '';
+          this.preload.findColorThumbnails(mainColor).then((imgs: string[]) => {
+            this.productImages = imgs.length ? imgs : [this.resolveColorImage(mainColor)];
+            this.currentImage = this.productImages[0] || p.image;
+          });
         } else if (p?.image) {
           this.productImages = [];
           this.currentImage = p.image;
@@ -61,7 +66,11 @@ export class ProductDetailComponent implements OnChanges, OnInit {
 
   selectColor(color: { name: string; hex: string }) {
     this.selectedColor.set(color);
-    this.currentImage = this.resolveColorImage(color.name);
+    // Recharge les vignettes liées à cette couleur (noir_1.png, noir_2.png, ...)
+    this.preload.findColorThumbnails(color.name).then((imgs: string[]) => {
+      this.productImages = imgs.length ? imgs : [this.resolveColorImage(color.name)];
+      this.currentImage = this.productImages[0] || this.currentImage;
+    });
   }
 
   toggleAccordion(section: string) {

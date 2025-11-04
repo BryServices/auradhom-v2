@@ -28,6 +28,32 @@ export class PreloadService {
     );
     return Promise.all(tasks);
   }
+
+  findColorThumbnails(colorName: string, maxCount = 8): Promise<string[]> {
+    const name = (colorName || '').toString().trim().toLowerCase();
+    const candidates: string[] = [];
+    for (let i = 1; i <= maxCount; i++) {
+      candidates.push(`assets/infos-T/1/${name}_${i}.png`);
+      candidates.push(`assets/infos-T/2/${name}_${i}.png`);
+    }
+    // Also try unnumbered as a fallback
+    candidates.push(`assets/infos-T/1/${name}.png`);
+    candidates.push(`assets/infos-T/2/${name}.png`);
+
+    return this.filterExistingImages(candidates);
+  }
+
+  private filterExistingImages(urls: string[]): Promise<string[]> {
+    const checks = urls.map(url =>
+      new Promise<string | null>((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(url);
+        img.onerror = () => resolve(null);
+        img.src = url;
+      })
+    );
+    return Promise.all(checks).then(results => results.filter((u): u is string => !!u));
+  }
 }
 
 

@@ -22,6 +22,8 @@ export class CollectionComponent {
   products = signal<Product[]>([]);
   // Prévisualisation courante par produit (id -> url image)
   previewById = signal<Record<number, string>>({});
+  // Thumbnails par produit (id -> urls)
+  thumbsById = signal<Record<number, string[]>>({});
   filterOptions = this.productService.getFilterOptions();
   
   filterForm = this.fb.group({
@@ -58,6 +60,13 @@ export class CollectionComponent {
         // Par défaut, utilise la première couleur si disponible, sinon l'image du produit
         const firstColor = prod.colors?.[0]?.name;
         map[prod.id] = firstColor ? this.resolveColorImage(firstColor) : prod.image;
+        if (firstColor) {
+          this.preloadService.findColorThumbnails(firstColor).then(imgs => {
+            const next = { ...this.thumbsById() };
+            next[prod.id] = imgs.length ? imgs : [this.resolveColorImage(firstColor)];
+            this.thumbsById.set(next);
+          });
+        }
       });
       this.previewById.set(map);
     });
