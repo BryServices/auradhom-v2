@@ -24,20 +24,18 @@ export class CartComponent {
   clear() { this.cart.clear(); }
 
   proceedToCheckout() {
+    const cartItems = this.items();
+    if (!cartItems.length) return;
+
+    // Vérifier si les informations client sont complètes
     if (!this.customerService.hasRequiredInfo()) {
       this.router.navigate(['/customer-info']);
       return;
     }
 
-    const cartItems = this.items();
-    if (!cartItems.length) return;
-
+    // Si les infos sont complètes, générer le message WhatsApp directement
     const orderData = {
-      productName: cartItems.map(item => item.name).join(', '),
-      size: cartItems.map(item => item.selectedSize).filter(Boolean).join(', '),
-      color: cartItems.map(item => item.selectedColor).filter(Boolean).join(', '),
-      quantity: cartItems.reduce((sum, item) => sum + item.quantity, 0),
-      price: cartItems[0].price,
+      items: cartItems,
       subtotal: this.cart.getSubtotal(),
       shippingCost: this.cart.getShippingCost(),
       total: this.total()
@@ -46,6 +44,12 @@ export class CartComponent {
     const message = this.customerService.formatWhatsAppMessage(orderData);
     const whatsappLink = this.customerService.getWhatsAppLink(message);
     window.open(whatsappLink, '_blank');
+    
+    // Rediriger vers la page de confirmation
+    setTimeout(() => {
+      this.router.navigate(['/envoye']);
+    }, 500);
+  }
 
   increment(index: number) {
     const it = this.items()[index];

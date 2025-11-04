@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CustomerService } from '../../services/customer.service';
+import { CartService } from '../../services/cart.service';
 import { Department, City } from '../../models/customer';
 
 @Component({
     selector: 'app-customer-info',
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './customer-info.component.html',
     styleUrls: ['./customer-info.component.css']
 })
@@ -16,11 +20,12 @@ export class CustomerInfoComponent implements OnInit {
     districts: string[] = [];
     customDistrict = false;
 
-    constructor(
-        private fb: FormBuilder,
-        private customerService: CustomerService,
-        private router: Router
-    ) {
+    private fb = inject(FormBuilder);
+    private customerService = inject(CustomerService);
+    private cartService = inject(CartService);
+    private router = inject(Router);
+    
+    constructor() {
         this.customerForm = this.fb.group({
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
@@ -78,8 +83,38 @@ export class CustomerInfoComponent implements OnInit {
 
     onSubmit(): void {
         if (this.customerForm.valid) {
+            // Sauvegarder les informations client
             this.customerService.setCustomerInfo(this.customerForm.value);
-            this.router.navigate(['/cart']);
+            
+            // Récupérer les articles du panier
+            const cartItems = this.cartService.getItems()();
+            if (!cartItems.length) {
+                this.router.navigate(['/panier']);
+                return;
+            }
+
+            // Préparer les données de commande
+            const orderData = {
+                items: cartItems,
+                subtotal: this.cartService.getSubtotal(),
+                shippingCost: this.cartService.getShippingCost(),
+                total: this.cartService.total()
+            };
+
+            // Générer le message WhatsApp et rediriger
+            const message = this.customerService.formatWhatsAppMessage(orderData);
+            const whatsappLink = this.customerService.getWhatsAppLink(message);
+            window.open(whatsappLink, '_blank');
+            
+            // Rediriger vers la page de confirmation après un court délai
+            setTimeout(() => {
+                this.router.navigate(['/envoye']);
+            }, 500);
+        } else {
+            // Marquer tous les champs comme touchés pour afficher les erreurs
+            Object.keys(this.customerForm.controls).forEach(key => {
+                this.customerForm.get(key)?.markAsTouched();
+            });
         }
     }
 }

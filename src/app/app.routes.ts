@@ -34,6 +34,10 @@ export const APP_ROUTES: Routes = [
     loadComponent: () => import('./pages/customer-info/customer-info.component').then(c => c.CustomerInfoComponent)
   },
   {
+    path: 'customer-info',
+    loadComponent: () => import('./pages/customer-info/customer-info.component').then(c => c.CustomerInfoComponent)
+  },
+  {
     path: '**',
     redirectTo: '',
     pathMatch: 'full'

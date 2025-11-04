@@ -55,6 +55,14 @@ export class CartService {
     this.writeToStorage();
   }
 
+  getSubtotal(): number {
+    return this.total();
+  }
+
+  getShippingCost(): number {
+    return 0; // Frais de livraison gratuits pour l'instant
+  }
+
   private readFromStorage(): CartItem[] {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
