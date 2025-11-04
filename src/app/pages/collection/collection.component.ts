@@ -62,21 +62,12 @@ export class CollectionComponent {
     // Précharge les images
     this.preloadService.preloadCollectionImages();
 
-    // Charge automatiquement les miniatures depuis src/app/infos-T/1 et /2 via webpack
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const req: any = (require as any).context(
-        '../../app/infos-T',
-        true,
-        /\.(png|jpe?g|webp|gif|svg)$/i
-      );
-      const keys: string[] = req.keys();
-      this.collectionThumbnails = keys
-        .filter(k => /\/(1|2)\//.test(k))
-        .map(k => req(k));
-    } catch {
-      this.collectionThumbnails = [];
-    }
+    // Construit la liste de miniatures depuis assets/infos-T/1 (jpg) et assets/infos-T/2 (png)
+    const colors = ['blanc', 'noir', 'beige', 'marron', 'gris'];
+    const thumbs: string[] = [];
+    for (const c of colors) thumbs.push(`assets/infos-T/1/${c}.jpg`);
+    for (const c of colors) thumbs.push(`assets/infos-T/2/${c}.png`);
+    this.collectionThumbnails = thumbs;
   }
 
   getPreview(product: Product): string {
