@@ -15,7 +15,7 @@ const PRODUCTS: Product[] = [
     type: 'T-shirt',
     material: 'Coton lourd',
     colors: [{ name: 'Blanc', hex: '#FFFFFF' }],
-    sizes: ['S', 'M', 'L', 'XL']
+    sizes: ['S', 'M', 'L', 'XL', '2XL']
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ const PRODUCTS: Product[] = [
     type: 'T-shirt',
     material: 'Coton lourd',
     colors: [{ name: 'Noir', hex: '#000000' }],
-    sizes: ['S', 'M', 'L', 'XL']
+    sizes: ['S', 'M', 'L', 'XL', '2XL']
   },
   {
     id: 3,
@@ -43,7 +43,7 @@ const PRODUCTS: Product[] = [
     type: 'T-shirt',
     material: 'Coton lourd',
     colors: [{ name: 'Beige', hex: '#D8D2C9' }],
-    sizes: ['S', 'M', 'L', 'XL']
+    sizes: ['S', 'M', 'L', 'XL', '2XL']
   },
   {
     id: 4,
@@ -57,7 +57,7 @@ const PRODUCTS: Product[] = [
     type: 'T-shirt',
     material: 'Coton lourd',
     colors: [{ name: 'Marron', hex: '#6B4423' }],
-    sizes: ['S', 'M', 'L', 'XL']
+    sizes: ['S', 'M', 'L', 'XL', '2XL']
   },
   {
     id: 5,
@@ -71,7 +71,7 @@ const PRODUCTS: Product[] = [
     type: 'T-shirt',
     material: 'Coton lourd',
     colors: [{ name: 'Gris', hex: '#808080' }],
-    sizes: ['S', 'M', 'L', 'XL']
+    sizes: ['S', 'M', 'L', 'XL', '2XL']
   }
 ];
 
@@ -92,7 +92,7 @@ export class ProductService {
 
   getFilterOptions() {
     return {
-      silhouette: ['S', 'M', 'L', 'XL'],
+      silhouette: ['S', 'M', 'L', 'XL', '2XL'],
       type: ['T-shirt'],
       matiere: ['Coton lourd'],
       teinte: ['Noir', 'Blanc', 'Beige', 'Marron', 'Gris']
