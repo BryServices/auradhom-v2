@@ -124,6 +124,11 @@
   object-fit: cover;
   transition: transform 500ms ease, opacity 300ms ease;
   display: block;
+  /* Optimisations de performance */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .product-card:hover .product-main-image {
@@ -234,6 +239,10 @@
   object-fit: cover;
   display: block;
   transition: transform 200ms ease;
+  /* Optimisations de performance */
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .thumb:hover img {

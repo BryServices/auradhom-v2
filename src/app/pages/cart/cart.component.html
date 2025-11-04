@@ -8,7 +8,11 @@
     <ul class="cart-list">
       @for (item of items(); track item.slug + item.size + item.color) {
         <li class="cart-item">
-          <img [src]="item.image" [alt]="item.name">
+          <img 
+            [src]="item.image" 
+            [alt]="item.name"
+            loading="lazy"
+            decoding="async">
           <div class="meta">
             <p class="name">{{ item.name }}</p>
             <p class="sub">Taille {{ item.size }} • {{ item.color }}</p>

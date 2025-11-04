@@ -18,8 +18,13 @@
   background-image: url('/cover.jpg');
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   filter: grayscale(100%) contrast(1.1);
   z-index: -1;
+  /* Optimisation du chargement */
+  will-change: transform;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 .hero-content {

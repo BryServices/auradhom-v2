@@ -7,24 +7,50 @@ export class PreloadService {
   preloadCollectionImages(): Promise<void> {
     const urls: string[] = [];
     // Précharger les 3 images par couleur depuis assets/infos-T/[couleur]/[1-3].png
+    // Priorité aux premières images visibles
     for (const c of this.colors) {
       urls.push(`assets/infos-T/${c}/1.png`);
       urls.push(`assets/infos-T/${c}/2.png`);
       urls.push(`assets/infos-T/${c}/3.png`);
     }
+    // Précharger aussi les images de fallback
+    for (const c of this.colors) {
+      urls.push(`assets/infos-T/2/${c}.png`);
+      urls.push(`assets/infos-T/1/${c}.jpg`);
+    }
     return this.preloadImages(urls).then(() => void 0);
   }
 
   private preloadImages(urls: string[]): Promise<void[]> {
-    const tasks = urls.map((url) =>
-      new Promise<void>((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve();
-        img.onerror = () => resolve();
-        img.src = url;
-      })
+    // Charger par batch pour ne pas surcharger le navigateur
+    const batchSize = 3;
+    const batches: string[][] = [];
+    for (let i = 0; i < urls.length; i += batchSize) {
+      batches.push(urls.slice(i, i + batchSize));
+    }
+
+    const loadBatch = (batch: string[]): Promise<void[]> => {
+      return Promise.all(
+        batch.map((url) =>
+          new Promise<void>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+            // Utiliser fetchpriority pour les premières images
+            if (batches.indexOf(batch) === 0 && batch.indexOf(url) === 0) {
+              (img as any).fetchPriority = 'high';
+            }
+            img.src = url;
+          })
+        )
+      );
+    };
+
+    // Charger les batches séquentiellement pour éviter la surcharge
+    return batches.reduce(
+      (promise, batch) => promise.then(() => loadBatch(batch)),
+      Promise.resolve([] as void[])
     );
-    return Promise.all(tasks);
   }
 
   findColorThumbnails(colorName: string, maxCount = 8): Promise<string[]> {

@@ -26,6 +26,9 @@
   height: 80px;
   object-fit: cover;
   border-radius: 8px;
+  /* Optimisations de performance */
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
 }
 
 .cart-item .meta .name {
