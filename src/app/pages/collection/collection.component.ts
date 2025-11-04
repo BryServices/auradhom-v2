@@ -60,14 +60,34 @@ export class CollectionComponent {
         // Par défaut, utilise la première couleur si disponible, sinon l'image du produit
         const firstColor = prod.colors?.[0]?.name;
         if (firstColor) {
-          // Charger les 3 images pour la première couleur
-          const colorImages = this.preloadService.getColorImages(firstColor);
-          map[prod.id] = colorImages[0] || this.resolveColorImage(firstColor);
-          const next = { ...this.thumbsById() };
-          next[prod.id] = colorImages;
-          this.thumbsById.set(next);
+          // Image par défaut (structure actuelle)
+          const defaultImg = this.resolveColorImage(firstColor);
+          map[prod.id] = defaultImg;
+          
+          // Chercher les images disponibles de manière asynchrone
+          this.preloadService.findColorThumbnails(firstColor).then(imgs => {
+            const next = { ...this.thumbsById() };
+            if (imgs.length > 0) {
+              // Prendre les 3 premières images trouvées, ou répéter la première si une seule
+              if (imgs.length === 1) {
+                next[prod.id] = [imgs[0], imgs[0], imgs[0]]; // Répéter pour avoir 3 vignettes
+              } else {
+                next[prod.id] = imgs.slice(0, 3);
+              }
+              const preview = { ...this.previewById() };
+              preview[prod.id] = imgs[0];
+              this.previewById.set(preview);
+            } else {
+              // Fallback : utiliser l'image du produit répétée
+              next[prod.id] = [prod.image, prod.image, prod.image];
+            }
+            this.thumbsById.set(next);
+          });
         } else {
           map[prod.id] = prod.image;
+          const next = { ...this.thumbsById() };
+          next[prod.id] = [prod.image, prod.image, prod.image];
+          this.thumbsById.set(next);
         }
       });
       this.previewById.set(map);
@@ -91,8 +111,9 @@ export class CollectionComponent {
 
   resolveColorImage(colorName: string): string {
     const name = this.normalizeColorName(colorName);
-    // Retourne la première image de la couleur (1.png)
-    return `assets/infos-T/${name}/1.png`;
+    // Structure actuelle : assets/infos-T/2/[couleur].png (PNG) ou assets/infos-T/1/[couleur].jpg (JPG)
+    // Priorité au PNG du dossier 2
+    return `assets/infos-T/2/${name}.png`;
   }
   
   getColorImages(product: Product): string[] {
