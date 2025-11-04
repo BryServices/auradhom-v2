@@ -19,9 +19,9 @@
             </div>
           </a>
           <div class="thumb-row" aria-label="Galerie">
-            @for(img of collectionThumbnails.slice(0, 6); track img) {
-              <button type="button" class="thumb" (click)="setPreview(product.id, img)" aria-label="Prévisualiser">
-                <img [src]="img" alt="Miniature">
+            @for(color of product.colors; track color.name) {
+              <button type="button" class="thumb" (click)="setPreview(product.id, resolveColorImage(color.name))" [attr.aria-label]="'Prévisualiser ' + color.name">
+                <img [src]="resolveColorImage(color.name)" [alt]="'Miniature ' + color.name">
               </button>
             }
           </div>

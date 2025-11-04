@@ -35,39 +35,20 @@ export class ProductDetailComponent implements OnChanges, OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {
-    // Charge automatiquement toutes les images situées dans assets/infos-T/1 et assets/infos-T/2
-    // Utilise require.context (webpack) pris en charge par Angular CLI
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const req: any = (require as any).context(
-        'assets/infos-T',
-        true,
-        /\.(png|jpe?g|webp|gif|svg)$/i
-      );
-      const keys: string[] = req.keys();
-      const images = keys
-        .filter(k => /\/([12])\//.test(k))
-        .map(k => `assets/infos-T${k.replace(/^\./, '')}`);
-      this.productImages = images;
-    } catch {
-      // Fallback: si require.context n'est pas disponible, on garde un tableau vide
-      this.productImages = [];
-    }
-
-    if (this.productImages.length > 0) {
-      this.currentImage = this.productImages[0];
-    }
-  }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['slug'] && this.slug) {
-      this.productService.getProductBySlug(this.slug).subscribe(p => {
+      this.productService.getProductBySlug(this.slug).subscribe((p: Product | undefined) => {
         this.product.set(p);
         if (p?.sizes.length === 1) this.selectedSize.set(p.sizes[0]);
         if (p?.colors.length === 1) this.selectedColor.set(p.colors[0]);
-        // Défaut: si aucune image courante définie, on utilise p.image
-        if (!this.currentImage && p?.image) {
+        // Alimente les vignettes à partir des couleurs du produit
+        if (p?.colors?.length) {
+          this.productImages = p.colors.map((c: { name: string; hex: string }) => this.resolveColorImage(c.name));
+          this.currentImage = this.productImages[0] || p.image;
+        } else if (p?.image) {
+          this.productImages = [];
           this.currentImage = p.image;
         }
       });
@@ -80,6 +61,7 @@ export class ProductDetailComponent implements OnChanges, OnInit {
 
   selectColor(color: { name: string; hex: string }) {
     this.selectedColor.set(color);
+    this.currentImage = this.resolveColorImage(color.name);
   }
 
   toggleAccordion(section: string) {
@@ -129,5 +111,14 @@ export class ProductDetailComponent implements OnChanges, OnInit {
     } else {
       this.quantity.set(Math.floor(value));
     }
+  }
+
+  private normalizeColorName(name: string): string {
+    return (name || '').toString().trim().toLowerCase();
+  }
+
+  private resolveColorImage(colorName: string): string {
+    const name = this.normalizeColorName(colorName);
+    return `assets/infos-T/1/${name}.jpg`;
   }
 }

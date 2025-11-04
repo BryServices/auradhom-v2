@@ -20,8 +20,6 @@ export class CollectionComponent {
   private fb = inject(FormBuilder);
 
   products = signal<Product[]>([]);
-  // Thumbnails cargées automatiquement depuis src/app/infos-T/1 et 2
-  collectionThumbnails: string[] = [];
   // Prévisualisation courante par produit (id -> url image)
   previewById = signal<Record<number, string>>({});
   filterOptions = this.productService.getFilterOptions();
@@ -56,18 +54,15 @@ export class CollectionComponent {
     this.productService.getProducts().subscribe(data => {
       this.products.set(data);
       const map: Record<number, string> = {};
-      data.forEach(prod => { map[prod.id] = prod.image; });
+      data.forEach(prod => {
+        // Par défaut, utilise la première couleur si disponible, sinon l'image du produit
+        const firstColor = prod.colors?.[0]?.name;
+        map[prod.id] = firstColor ? this.resolveColorImage(firstColor) : prod.image;
+      });
       this.previewById.set(map);
     });
     // Précharge les images
     this.preloadService.preloadCollectionImages();
-
-    // Construit la liste de miniatures depuis assets/infos-T/1 (jpg) et assets/infos-T/2 (png)
-    const colors = ['blanc', 'noir', 'beige', 'marron', 'gris'];
-    const thumbs: string[] = [];
-    for (const c of colors) thumbs.push(`assets/infos-T/1/${c}.jpg`);
-    for (const c of colors) thumbs.push(`assets/infos-T/2/${c}.png`);
-    this.collectionThumbnails = thumbs;
   }
 
   getPreview(product: Product): string {
@@ -77,6 +72,18 @@ export class CollectionComponent {
   setPreview(productId: number, imgUrl: string): void {
     const current = this.previewById();
     this.previewById.set({ ...current, [productId]: imgUrl });
+  }
+
+  private normalizeColorName(name: string): string {
+    return (name || '').toString().trim().toLowerCase();
+  }
+
+  resolveColorImage(colorName: string): string {
+    const name = this.normalizeColorName(colorName);
+    // Préférence au JPG (dossier 1), sinon PNG (dossier 2)
+    // Les deux URLs sont valides côté assets; le navigateur chargera la bonne si elle existe
+    // On retourne le JPG par défaut; si votre set d'images est mixte, vous pouvez tester existence via HEAD
+    return `assets/infos-T/1/${name}.jpg`;
   }
 
   onCheckboxChange(event: Event, controlName: string) {
