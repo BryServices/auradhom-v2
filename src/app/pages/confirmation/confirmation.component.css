@@ -31,3 +31,25 @@
   font-size: 0.8rem;
   letter-spacing: 1px;
 }
+
+.contact-line {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--gray-dark);
+}
+
+.contact-line p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.contact-line a {
+  color: var(--white);
+  text-decoration: underline;
+  transition: color 160ms ease;
+}
+
+.contact-line a:hover {
+  color: var(--text-secondary);
+}

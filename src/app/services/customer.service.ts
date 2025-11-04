@@ -103,8 +103,7 @@ Département : ${deptName}
 Ville : ${cityName}
 Quartier : ${customer.district}
 
-Bienvenue dans la famille, et merci pour votre commande.
-Ne dis rien. Sois. AURADHOM`;
+Félicitations d'avoir décidé de porter bien plus qu'un vêtement, mais une aura.`;
 
         return message;
     }
