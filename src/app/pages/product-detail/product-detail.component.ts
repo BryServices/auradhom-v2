@@ -148,4 +148,25 @@ Merci.
     if (!img) return;
     this.currentImage = img;
   }
+
+  incrementQuantity(): void {
+    const current = this.quantity();
+    this.quantity.set(current + 1);
+  }
+
+  decrementQuantity(): void {
+    const current = this.quantity();
+    if (current > 1) this.quantity.set(current - 1);
+  }
+
+  onQuantityInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = Number(input.value);
+    if (Number.isNaN(value) || value < 1) {
+      this.quantity.set(1);
+      input.value = '1';
+    } else {
+      this.quantity.set(Math.floor(value));
+    }
+  }
 }

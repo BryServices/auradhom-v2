@@ -11,6 +11,7 @@
     <div class="details">
       <h1>{{ p.name }}</h1>
       <p class="price">{{ p.price | formatFcfa }}</p>
+      <p class="total-line">Total: <strong>{{ (p.price * quantity()) | formatFcfa }}</strong></p>
       <p class="description">{{ p.description }}</p>
 
       <div class="selectors">
@@ -48,6 +49,11 @@
         <lucide-icon name="smartphone" [size]="16"></lucide-icon>
         <span>Commande sur WhatsApp</span>
       </button>
+      <div class="quantity-selector">
+        <button class="qty-btn" aria-label="Diminuer" (click)="decrementQuantity()">−</button>
+        <input type="number" min="1" [value]="quantity()" (input)="onQuantityInput($event)" aria-label="Quantité">
+        <button class="qty-btn" aria-label="Augmenter" (click)="incrementQuantity()">+</button>
+      </div>
 
       <button class="cta-whatsapp" (click)="addToCart()" style="margin-top:12px;">
         <span>Ajouter au panier</span>
