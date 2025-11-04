@@ -51,16 +51,18 @@
     font-size: 1rem;
     color: var(--text-primary);
     font-family: var(--font-body);
-    transition: border-color 160ms ease, background-color 160ms ease;
+    transition: all 200ms ease;
+    line-height: 1.5;
 }
 
 .form-control:focus {
     outline: none;
     border-color: var(--white);
     background-color: rgba(255, 255, 255, 0.02);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
 }
 
-.form-control:hover:not(:focus) {
+.form-control:hover:not(:focus):not(select) {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -72,10 +74,59 @@
 select.form-control {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23D8D2C9' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23D8D2C9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 16px center;
-    padding-right: 40px;
+    background-position: right 14px center;
+    background-size: 16px;
+    padding-right: 44px;
+    font-weight: 400;
+    line-height: 1.5;
+    transition: all 200ms ease, background-image 200ms ease;
+}
+
+select.form-control:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.01);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+select.form-control:focus {
+    border-color: var(--white);
+    background-color: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+select.form-control:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23808080' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+/* Styles pour les options du select */
+select.form-control option {
+    background-color: var(--background);
+    color: var(--text-primary);
+    padding: 12px 16px;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    line-height: 1.6;
+}
+
+select.form-control option:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+select.form-control option:checked {
+    background-color: rgba(255, 255, 255, 0.15);
+    font-weight: 500;
+}
+
+select.form-control option:disabled {
+    color: var(--text-secondary);
+    opacity: 0.6;
 }
 
 .error-message {
