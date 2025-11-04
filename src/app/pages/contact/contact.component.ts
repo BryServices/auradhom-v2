@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { OFFICIAL_PHONE_DISPLAY, OFFICIAL_PHONE_E164, OFFICIAL_WA_ME_URL } from '../../shared/constants';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -18,6 +19,10 @@ export class ContactComponent {
   
   formSubmitted = false;
   formSuccess = false;
+
+  phoneDisplay = OFFICIAL_PHONE_DISPLAY;
+  phoneE164 = OFFICIAL_PHONE_E164;
+  waMeUrl = OFFICIAL_WA_ME_URL;
 
   onSubmit() {
     this.formSubmitted = true;

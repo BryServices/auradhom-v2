@@ -2,7 +2,7 @@
   <div class="content">
     <h2>Une question ?</h2>
     <p>Écris-nous. Nous répondons en silence.</p>
-    <p class="contact-direct">Contact direct: <a href="tel:+242066060029">+242 06 606 0029</a> · <a href="https://wa.me/242066060029" target="_blank" rel="noopener">WhatsApp</a></p>
+    <p class="contact-direct">Contact direct: <a [href]="'tel:' + phoneE164">{{ phoneDisplay }}</a> · <a [href]="waMeUrl" target="_blank" rel="noopener">WhatsApp</a></p>
 
     @if (formSuccess) {
       <p class="success-message">Message envoyé.</p>

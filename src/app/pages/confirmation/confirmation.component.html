@@ -6,7 +6,7 @@
     <h2 class="tagline">Ne dis rien. Sois.</h2>
     <a routerLink="/collection" class="cta-button">Retour à la collection</a>
     <div class="contact-line">
-      <p>Besoin d'aide ? Contact: <a href="tel:+242066060029">+242 06 606 0029</a> · <a href="https://wa.me/242066060029" target="_blank" rel="noopener">WhatsApp</a></p>
+      <p>Besoin d'aide ? Contact: <a [href]="'tel:' + phoneE164">{{ phoneDisplay }}</a> · <a [href]="waMeUrl" target="_blank" rel="noopener">WhatsApp</a></p>
     </div>
   </div>
 </div>
