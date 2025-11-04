@@ -10,13 +10,22 @@
   <main class="product-grid-container">
     <div class="product-grid">
       @for(product of filteredProducts(); track product.id) {
-        <a [routerLink]="['/produit', product.slug]" class="product-card">
-          <img [src]="product.image" [alt]="product.name">
-          <div class="product-info">
-            <span class="product-name">{{ product.name }}</span>
-            <span class="product-price">{{ product.price | formatFcfa }}</span>
+        <div class="product-card">
+          <a [routerLink]="['/produit', product.slug]" class="product-link">
+            <img [src]="getPreview(product)" [alt]="product.name">
+            <div class="product-info">
+              <span class="product-name">{{ product.name }}</span>
+              <span class="product-price">{{ product.price | formatFcfa }}</span>
+            </div>
+          </a>
+          <div class="thumb-row" aria-label="Galerie">
+            @for(img of collectionThumbnails.slice(0, 6); track img) {
+              <button type="button" class="thumb" (click)="setPreview(product.id, img)" aria-label="Prévisualiser">
+                <img [src]="img" alt="Miniature">
+              </button>
+            }
           </div>
-        </a>
+        </div>
       } @empty {
         <p class="no-results">Aucun produit ne correspond à votre sélection.</p>
       }

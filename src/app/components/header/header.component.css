@@ -96,6 +96,16 @@
   border-color: var(--white);
 }
 
+.cart-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--text-primary);
+}
+
+.cart-link:hover .cart-icon {
+  color: var(--white);
+}
+
 .cart-badge {
   position: absolute;
   top: -6px;

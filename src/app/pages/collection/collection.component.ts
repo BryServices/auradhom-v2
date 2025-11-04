@@ -20,6 +20,10 @@ export class CollectionComponent {
   private fb = inject(FormBuilder);
 
   products = signal<Product[]>([]);
+  // Thumbnails cargées automatiquement depuis src/app/infos-T/1 et 2
+  collectionThumbnails: string[] = [];
+  // Prévisualisation courante par produit (id -> url image)
+  previewById = signal<Record<number, string>>({});
   filterOptions = this.productService.getFilterOptions();
   
   filterForm = this.fb.group({
@@ -49,9 +53,39 @@ export class CollectionComponent {
   isFilterOpen = signal(false);
 
   constructor() {
-    this.productService.getProducts().subscribe(data => this.products.set(data));
-    // Précharge toutes les images de la collection (infos-T/1 *.jpg, infos-T/2 *.png)
+    this.productService.getProducts().subscribe(data => {
+      this.products.set(data);
+      const map: Record<number, string> = {};
+      data.forEach(prod => { map[prod.id] = prod.image; });
+      this.previewById.set(map);
+    });
+    // Précharge les images
     this.preloadService.preloadCollectionImages();
+
+    // Charge automatiquement les miniatures depuis src/app/infos-T/1 et /2 via webpack
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const req: any = (require as any).context(
+        '../../app/infos-T',
+        true,
+        /\.(png|jpe?g|webp|gif|svg)$/i
+      );
+      const keys: string[] = req.keys();
+      this.collectionThumbnails = keys
+        .filter(k => /\/(1|2)\//.test(k))
+        .map(k => req(k));
+    } catch {
+      this.collectionThumbnails = [];
+    }
+  }
+
+  getPreview(product: Product): string {
+    return this.previewById()[product.id] ?? product.image;
+  }
+
+  setPreview(productId: number, imgUrl: string): void {
+    const current = this.previewById();
+    this.previewById.set({ ...current, [productId]: imgUrl });
   }
 
   onCheckboxChange(event: Event, controlName: string) {
