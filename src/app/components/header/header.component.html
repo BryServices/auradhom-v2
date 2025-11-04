@@ -8,7 +8,7 @@
       <a routerLink="/a-propos">Philosophie</a>
       <a routerLink="/contact">Contact</a>
       <a routerLink="/panier" class="cart-link" [class.bump]="animate()" aria-label="Ouvrir le panier">
-        <lucide-icon name="shopping-cart" [size]="22"></lucide-icon>
+        <lucide-icon name="shopping-basket" [size]="24"></lucide-icon>
         <span class="cart-badge" aria-live="polite">{{ cartCount() }}</span>
       </a>
     </nav>
@@ -23,7 +23,7 @@
       <a routerLink="/a-propos" (click)="toggleMenu()">Philosophie</a>
       <a routerLink="/contact" (click)="toggleMenu()">Contact</a>
       <a routerLink="/panier" (click)="toggleMenu()" class="cart-link" [class.bump]="animate()">
-        <lucide-icon name="shopping-cart" [size]="24"></lucide-icon>
+        <lucide-icon name="shopping-basket" [size]="24"></lucide-icon>
         <span class="cart-badge">{{ cartCount() }}</span>
       </a>
     </div>
