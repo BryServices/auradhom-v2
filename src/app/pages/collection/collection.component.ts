@@ -68,52 +68,84 @@ export class CollectionComponent {
           this.preloadService.findColorThumbnails(firstColor, 6).then(imgs => {
             const next = { ...this.thumbsById() };
             if (imgs.length > 0) {
-              // Toujours avoir exactement 3 vignettes différentes
-              if (imgs.length >= 3) {
-                // Utiliser les 3 premières images trouvées (déjà uniques)
-                next[prod.id] = imgs.slice(0, 3);
-              } else if (imgs.length === 2) {
-                // Si seulement 2 images trouvées, chercher une 3ème source différente
-                const altName = this.normalizeColorName(firstColor);
-                // Essayer plusieurs variantes pour trouver une 3ème image différente
-                const altPaths = [
-                  `assets/infos-T/${altName}/3.png`,
-                  `assets/infos-T/${altName}/3.jpg`,
-                  `assets/infos-T/2/${altName}_3.png`,
-                  `assets/infos-T/1/${altName}_3.jpg`,
-                  `assets/infos-T/1/${altName}_3.png`,
-                  `assets/infos-T/2/${altName}_3.jpg`,
-                  `assets/infos-T/${altName}/2.png`, // Si 1.png et 3.png existent mais pas 2.png
-                  `assets/infos-T/${altName}/1.png`,
-                  `assets/infos-T/2/${altName}_2.png`,
-                  `assets/infos-T/1/${altName}_2.jpg`,
-                  `assets/infos-T/2/${altName}.jpg`, // Variante JPG si PNG déjà utilisé
-                  `assets/infos-T/1/${altName}.png`, // Variante PNG si JPG déjà utilisé
-                  imgs[1] // Fallback : utiliser la 2ème image (sera remplacée si une 3ème différente est trouvée)
-                ];
+              // Cas spécial pour le produit beige : s'assurer que biege.png est la 3ème image
+              const isBeige = this.normalizeColorName(firstColor) === 'beige' && prod.name.toLowerCase().includes('beige');
+              
+              if (isBeige) {
+                // Pour beige, garantir que assets/biege.png est la 3ème vignette
+                const biegeImage = 'assets/biege.png';
+                let finalImages: string[] = [];
                 
-                // Chercher la première image disponible qui n'est pas déjà dans la liste
-                this.findFirstAvailableImage(altPaths, imgs).then(thirdImg => {
-                  // Mettre à jour seulement si on a trouvé une image différente
-                  if (thirdImg !== imgs[0] && thirdImg !== imgs[1]) {
-                    const updated = { ...this.thumbsById() };
-                    updated[prod.id] = [imgs[0], imgs[1], thirdImg];
-                    this.thumbsById.set(updated);
+                if (imgs.length >= 3) {
+                  // Si on a déjà 3+ images, remplacer la 3ème par biege.png si elle n'y est pas déjà
+                  finalImages = imgs.slice(0, 2);
+                  if (!imgs.includes(biegeImage)) {
+                    finalImages.push(biegeImage);
+                  } else {
+                    // Si biege.png est déjà dans les images, garder les 3 premières
+                    finalImages = imgs.slice(0, 3);
                   }
-                });
-                
-                // Utiliser temporairement la 2ème image pour la 3ème (sera remplacée si une 3ème différente est trouvée)
-                next[prod.id] = [imgs[0], imgs[1], imgs[1]];
+                } else if (imgs.length === 2) {
+                  // Si seulement 2 images, ajouter biege.png comme 3ème
+                  finalImages = [imgs[0], imgs[1], biegeImage];
+                } else {
+                  // Si 1 seule image, ajouter biege.png
+                  finalImages = [imgs[0], imgs[0], biegeImage];
+                }
+                next[prod.id] = finalImages;
               } else {
-                // Si 1 seule image, répéter 3 fois
-                next[prod.id] = [imgs[0], imgs[0], imgs[0]];
+                // Pour les autres produits, logique normale
+                if (imgs.length >= 3) {
+                  // Utiliser les 3 premières images trouvées (déjà uniques)
+                  next[prod.id] = imgs.slice(0, 3);
+                } else if (imgs.length === 2) {
+                  // Si seulement 2 images trouvées, chercher une 3ème source différente
+                  const altName = this.normalizeColorName(firstColor);
+                  // Essayer plusieurs variantes pour trouver une 3ème image différente
+                  const altPaths = [
+                    `assets/infos-T/${altName}/3.png`,
+                    `assets/infos-T/${altName}/3.jpg`,
+                    `assets/infos-T/2/${altName}_3.png`,
+                    `assets/infos-T/1/${altName}_3.jpg`,
+                    `assets/infos-T/1/${altName}_3.png`,
+                    `assets/infos-T/2/${altName}_3.jpg`,
+                    `assets/infos-T/${altName}/2.png`, // Si 1.png et 3.png existent mais pas 2.png
+                    `assets/infos-T/${altName}/1.png`,
+                    `assets/infos-T/2/${altName}_2.png`,
+                    `assets/infos-T/1/${altName}_2.jpg`,
+                    `assets/infos-T/2/${altName}.jpg`, // Variante JPG si PNG déjà utilisé
+                    `assets/infos-T/1/${altName}.png`, // Variante PNG si JPG déjà utilisé
+                    imgs[1] // Fallback : utiliser la 2ème image (sera remplacée si une 3ème différente est trouvée)
+                  ];
+                  
+                  // Chercher la première image disponible qui n'est pas déjà dans la liste
+                  this.findFirstAvailableImage(altPaths, imgs).then(thirdImg => {
+                    // Mettre à jour seulement si on a trouvé une image différente
+                    if (thirdImg !== imgs[0] && thirdImg !== imgs[1]) {
+                      const updated = { ...this.thumbsById() };
+                      updated[prod.id] = [imgs[0], imgs[1], thirdImg];
+                      this.thumbsById.set(updated);
+                    }
+                  });
+                  
+                  // Utiliser temporairement la 2ème image pour la 3ème (sera remplacée si une 3ème différente est trouvée)
+                  next[prod.id] = [imgs[0], imgs[1], imgs[1]];
+                } else {
+                  // Si 1 seule image, répéter 3 fois
+                  next[prod.id] = [imgs[0], imgs[0], imgs[0]];
+                }
               }
               const preview = { ...this.previewById() };
               preview[prod.id] = imgs[0];
               this.previewById.set(preview);
             } else {
               // Fallback : utiliser l'image du produit répétée 3 fois
-              next[prod.id] = [prod.image, prod.image, prod.image];
+              // Cas spécial pour beige
+              if (this.normalizeColorName(firstColor) === 'beige' && prod.name.toLowerCase().includes('beige')) {
+                next[prod.id] = [prod.image, prod.image, 'assets/biege.png'];
+              } else {
+                next[prod.id] = [prod.image, prod.image, prod.image];
+              }
             }
             this.thumbsById.set(next);
           });

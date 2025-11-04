@@ -56,6 +56,11 @@ export class PreloadService {
     // Fallbacks
     candidates.push(`assets/${name}.png`);
     candidates.push(`assets/${name}.jpg`);
+    
+    // Cas spécial pour beige : ajouter biege.png (avec l'orthographe du fichier)
+    if (name === 'beige') {
+      candidates.push('assets/biege.png');
+    }
 
     return this.filterExistingImages(candidates).then(urls => {
       // Supprimer les doublons en gardant l'ordre de priorité

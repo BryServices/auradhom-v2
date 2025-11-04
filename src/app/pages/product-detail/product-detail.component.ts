@@ -48,8 +48,33 @@ export class ProductDetailComponent implements OnChanges, OnInit {
         // Alimente les vignettes à partir des visuels de la couleur principale (trouvée en premier)
         if (p?.colors?.length) {
           const mainColor = p.colors[0]?.name ?? '';
+          const isBeige = this.normalizeColorName(mainColor) === 'beige' && p.name.toLowerCase().includes('beige');
+          
           this.preload.findColorThumbnails(mainColor).then((imgs: string[]) => {
-            this.productImages = imgs.length ? imgs : [this.resolveColorImage(mainColor)];
+            if (isBeige) {
+              // Cas spécial pour beige : garantir que biege.png est la 3ème vignette
+              const biegeImage = 'assets/biege.png';
+              if (imgs.length >= 3) {
+                // Si on a déjà 3+ images, remplacer la 3ème par biege.png si elle n'y est pas déjà
+                const finalImages = imgs.slice(0, 2);
+                if (!imgs.includes(biegeImage)) {
+                  finalImages.push(biegeImage);
+                } else {
+                  finalImages.push(...imgs.slice(2, 3));
+                }
+                this.productImages = finalImages;
+              } else if (imgs.length === 2) {
+                // Si seulement 2 images, ajouter biege.png comme 3ème
+                this.productImages = [imgs[0], imgs[1], biegeImage];
+              } else if (imgs.length === 1) {
+                // Si 1 seule image, ajouter biege.png
+                this.productImages = [imgs[0], imgs[0], biegeImage];
+              } else {
+                this.productImages = [this.resolveColorImage(mainColor), this.resolveColorImage(mainColor), biegeImage];
+              }
+            } else {
+              this.productImages = imgs.length ? imgs : [this.resolveColorImage(mainColor)];
+            }
             this.currentImage = this.productImages[0] || p.image;
           });
         } else if (p?.image) {
@@ -66,9 +91,32 @@ export class ProductDetailComponent implements OnChanges, OnInit {
 
   selectColor(color: { name: string; hex: string }) {
     this.selectedColor.set(color);
+    const p = this.product();
+    const isBeige = this.normalizeColorName(color.name) === 'beige' && p?.name.toLowerCase().includes('beige');
+    
     // Recharge les vignettes liées à cette couleur (noir_1.png, noir_2.png, ...)
     this.preload.findColorThumbnails(color.name).then((imgs: string[]) => {
-      this.productImages = imgs.length ? imgs : [this.resolveColorImage(color.name)];
+      if (isBeige) {
+        // Cas spécial pour beige : garantir que biege.png est la 3ème vignette
+        const biegeImage = 'assets/biege.png';
+        if (imgs.length >= 3) {
+          const finalImages = imgs.slice(0, 2);
+          if (!imgs.includes(biegeImage)) {
+            finalImages.push(biegeImage);
+          } else {
+            finalImages.push(...imgs.slice(2, 3));
+          }
+          this.productImages = finalImages;
+        } else if (imgs.length === 2) {
+          this.productImages = [imgs[0], imgs[1], biegeImage];
+        } else if (imgs.length === 1) {
+          this.productImages = [imgs[0], imgs[0], biegeImage];
+        } else {
+          this.productImages = [this.resolveColorImage(color.name), this.resolveColorImage(color.name), biegeImage];
+        }
+      } else {
+        this.productImages = imgs.length ? imgs : [this.resolveColorImage(color.name)];
+      }
       this.currentImage = this.productImages[0] || this.currentImage;
     });
   }
