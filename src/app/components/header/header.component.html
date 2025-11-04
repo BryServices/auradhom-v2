@@ -1,0 +1,25 @@
+<header class="header fade-in">
+  <div class="header-container">
+    <div class="logo">
+      <a routerLink="/">AURADHOM</a>
+    </div>
+    <nav class="desktop-nav">
+      <a routerLink="/collection">Collection</a>
+      <a routerLink="/a-propos">Philosophie</a>
+      <a routerLink="/contact">Contact</a>
+      <a routerLink="/panier" class="cart-link">Panier ({{ cartCount() }})</a>
+    </nav>
+    <button class="mobile-nav-toggle" (click)="toggleMenu()">
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+  </div>
+  @if (isMenuOpen) {
+    <div class="mobile-nav">
+      <a routerLink="/collection" (click)="toggleMenu()">Collection</a>
+      <a routerLink="/a-propos" (click)="toggleMenu()">Philosophie</a>
+      <a routerLink="/contact" (click)="toggleMenu()">Contact</a>
+      <a routerLink="/panier" (click)="toggleMenu()">Panier ({{ cartCount() }})</a>
+    </div>
+  }
+</header>

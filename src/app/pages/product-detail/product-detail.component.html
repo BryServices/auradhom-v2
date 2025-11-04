@@ -1,0 +1,99 @@
+@if (product(); as p) {
+  <div class="product-detail-container fade-in">
+    <div class="gallery">
+      <img [src]="currentImage() ?? p.image" [alt]="p.name" class="main-image" [class.fading]="imageFade()">
+      <div class="thumbnail-grid">
+        @for(img of p.gallery; track img) {
+          <img [src]="img" alt="Détail du produit" class="thumbnail">
+        }
+      </div>
+    </div>
+    <div class="details">
+      <h1>{{ p.name }}</h1>
+      <p class="price">{{ p.price | formatFcfa }}</p>
+      <p class="description">{{ p.description }}</p>
+
+      <div class="selectors">
+        <div class="selector-group">
+          <p class="selector-label">Taille</p>
+          <div class="options">
+            @for(size of p.sizes; track size) {
+              <button 
+                class="option-btn size-btn"
+                [class.selected]="selectedSize() === size"
+                (click)="selectSize(size)">
+                {{ size }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="selector-group">
+          <p class="selector-label">Couleur</p>
+          <div class="options">
+            @for(color of p.colors; track color.name) {
+              <button 
+                class="option-btn color-btn"
+                [class.selected]="selectedColor()?.name === color.name"
+                (click)="selectColor(color)"
+                [style.backgroundColor]="color.hex"
+                [attr.aria-label]="color.name">
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <button class="cta-whatsapp" (click)="orderOnWhatsApp()">
+        <lucide-icon name="smartphone" [size]="16"></lucide-icon>
+        <span>Commande sur WhatsApp</span>
+      </button>
+
+      <button class="cta-whatsapp" (click)="addToCart()" style="margin-top:12px;">
+        <span>Ajouter au panier</span>
+      </button>
+
+      @if(p.stock && p.stock < 20) {
+        <p class="stock-info">{{ p.stock }} pièces restantes</p>
+      }
+
+      <div class="accordion">
+        <div class="accordion-item">
+          <button class="accordion-header" (click)="toggleAccordion('composition')">
+            <span>Composition</span>
+            <span>{{ openAccordion() === 'composition' ? '-' : '+' }}</span>
+          </button>
+          @if(openAccordion() === 'composition') {
+            <div class="accordion-content">
+              <p>{{ p.details.composition }}</p>
+            </div>
+          }
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header" (click)="toggleAccordion('entretien')">
+            <span>Entretien</span>
+            <span>{{ openAccordion() === 'entretien' ? '-' : '+' }}</span>
+          </button>
+          @if(openAccordion() === 'entretien') {
+            <div class="accordion-content">
+              <p>{{ p.details.maintenance }}</p>
+            </div>
+          }
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header" (click)="toggleAccordion('provenance')">
+            <span>Provenance</span>
+            <span>{{ openAccordion() === 'provenance' ? '-' : '+' }}</span>
+          </button>
+          @if(openAccordion() === 'provenance') {
+            <div class="accordion-content">
+              <p>{{ p.details.origin }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <p class="container">Produit non trouvé.</p>
+}

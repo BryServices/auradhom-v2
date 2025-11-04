@@ -1,0 +1,20 @@
+<div class="contact-container container fade-in">
+  <div class="content">
+    <h2>Une question ?</h2>
+    <p>Écris-nous. Nous répondons en silence.</p>
+
+    @if (formSuccess) {
+      <p class="success-message">Message envoyé.</p>
+    } @else {
+      <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-group">
+          <input type="email" placeholder="Email" formControlName="email">
+        </div>
+        <div class="form-group">
+          <textarea placeholder="Message" formControlName="message" rows="5"></textarea>
+        </div>
+        <button type="submit" class="submit-button">Envoyer</button>
+      </form>
+    }
+  </div>
+</div>

@@ -1,0 +1,28 @@
+.about-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.content {
+  max-width: 600px;
+}
+
+.content h1 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}
+
+.content h2 {
+  font-size: 1.25rem;
+  color: var(--sand);
+  margin-bottom: 48px;
+}
+
+.content p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}

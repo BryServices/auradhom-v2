@@ -1,0 +1,56 @@
+.hero-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-grow: 1;
+  position: relative;
+  min-height: calc(100vh - 160px); 
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://img-wrapper.vercel.app/image?url=https://placehold.co/1920x1080/000000/1C1C1C.png?text=');
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(100%) contrast(1.1);
+  z-index: -1;
+}
+
+.hero-content {
+  color: var(--white);
+  padding: 32px;
+}
+
+.hero-content h1 {
+  font-size: 2rem;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+}
+
+.hero-content p {
+  font-size: 1.25rem;
+  color: var(--sand);
+  margin-bottom: 48px;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 12px 24px;
+  border: 1px solid var(--gray-dark);
+  color: var(--sand);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+@media (min-width: 768px) {
+  .hero-content h1 {
+    font-size: 3rem;
+  }
+}

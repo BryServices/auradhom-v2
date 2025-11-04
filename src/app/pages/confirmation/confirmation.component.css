@@ -1,0 +1,33 @@
+.confirmation-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.content {
+  max-width: 500px;
+}
+
+.content p {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--sand);
+}
+
+.tagline {
+  font-size: 1.5rem;
+  margin: 32px 0;
+}
+
+.cta-button {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 12px 24px;
+  border: 1px solid var(--gray-dark);
+  color: var(--sand);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}

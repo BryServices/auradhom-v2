@@ -1,0 +1,136 @@
+.product-detail-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  padding: 32px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.gallery .main-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  margin-bottom: 16px;
+  transition: opacity 200ms ease;
+}
+
+.gallery .main-image.fading {
+  opacity: 0.3;
+}
+
+.thumbnail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.thumbnail-grid .thumbnail {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.details h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.details .price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.details .description {
+  color: var(--sand);
+  margin-bottom: 32px;
+}
+
+.selectors {
+  margin-bottom: 32px;
+}
+
+.selector-group {
+  margin-bottom: 24px;
+}
+
+.selector-label {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.option-btn {
+  border: 1px solid var(--gray-dark);
+  min-width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.option-btn.selected {
+  border-color: var(--white);
+}
+
+.color-btn {
+  border-radius: 0;
+}
+
+.cta-whatsapp {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--gray-dark);
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+}
+
+.stock-info {
+  text-align: center;
+  margin-top: 16px;
+  color: var(--sand);
+  font-style: italic;
+}
+
+.accordion {
+  margin-top: 48px;
+  border-top: 1px solid var(--gray-dark);
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--gray-dark);
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 0;
+  font-size: 1rem;
+}
+
+.accordion-content {
+  padding-bottom: 16px;
+  color: var(--sand);
+}
+
+@media (min-width: 768px) {
+  .product-detail-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+}

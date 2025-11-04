@@ -1,0 +1,25 @@
+<div class="collection-container container fade-in">
+  <section class="collection-info-section">
+    <div class="collection-info-inner">
+      <h1 class="collection-title">Collection T-Shirts AURADHOM</h1>
+      <p class="collection-lead">Découvrez la nouvelle collection de t-shirts AURADHOM, pensée pour les esprits libres et les passionnés de style simple mais affirmé.</p>
+      <p class="collection-text">Chaque pièce est conçue pour offrir confort, élégance et durabilité. Nos t-shirts sont disponibles en cinq couleurs intemporelles — blanc, noir, beige, marron et gris — pour s’adapter à chaque personnalité.</p>
+    </div>
+  </section>
+
+  <main class="product-grid-container">
+    <div class="product-grid">
+      @for(product of filteredProducts(); track product.id) {
+        <a [routerLink]="['/produit', product.slug]" class="product-card">
+          <img [src]="product.image" [alt]="product.name">
+          <div class="product-info">
+            <span class="product-name">{{ product.name }}</span>
+            <span class="product-price">{{ product.price | formatFcfa }}</span>
+          </div>
+        </a>
+      } @empty {
+        <p class="no-results">Aucun produit ne correspond à votre sélection.</p>
+      }
+    </div>
+  </main>
+</div>
