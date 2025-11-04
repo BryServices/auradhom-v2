@@ -13,13 +13,7 @@
         <div class="product-card">
           <div class="product-image-wrapper">
             <a [routerLink]="['/produit', product.slug]" class="product-link">
-              <img 
-                [src]="getPreview(product)" 
-                [alt]="product.name" 
-                class="product-main-image"
-                [loading]="$index < 3 ? 'eager' : 'lazy'"
-                [attr.fetchpriority]="$index === 0 ? 'high' : 'auto'"
-                decoding="async">
+              <img [src]="getPreview(product)" [alt]="product.name" class="product-main-image">
             </a>
           </div>
           <div class="product-info">
@@ -46,21 +40,13 @@
                   [class.active]="getPreview(product) === img"
                   (click)="setPreview(product.id, img)" 
                   [attr.aria-label]="'Vue ' + (idx + 1)">
-                  <img 
-                    [src]="img" 
-                    [alt]="'Vue ' + (idx + 1)"
-                    loading="lazy"
-                    decoding="async">
+                  <img [src]="img" [alt]="'Vue ' + (idx + 1)">
                 </button>
               }
             } @else {
               @for(color of product.colors; track color.name) {
                 <button type="button" class="thumb" (click)="setPreview(product.id, resolveColorImage(color.name))" [attr.aria-label]="'Prévisualiser ' + color.name">
-                  <img 
-                    [src]="resolveColorImage(color.name)" 
-                    [alt]="'Miniature ' + color.name"
-                    loading="lazy"
-                    decoding="async">
+                  <img [src]="resolveColorImage(color.name)" [alt]="'Miniature ' + color.name">
                 </button>
               }
             }
