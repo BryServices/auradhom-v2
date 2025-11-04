@@ -1,10 +1,10 @@
 @if (product(); as p) {
   <div class="product-detail-container fade-in">
     <div class="gallery">
-      <img [src]="currentImage() ?? p.image" [alt]="p.name" class="main-image" [class.fading]="imageFade()">
+      <img [src]="currentImage || p.image" [alt]="p.name" class="main-image" [class.fading]="imageFade()">
       <div class="thumbnail-grid">
-        @for(img of p.gallery; track img) {
-          <img [src]="img" alt="Détail du produit" class="thumbnail">
+        @for(img of productImages; track img) {
+          <img [src]="img" alt="Détail du produit" class="thumbnail" (click)="selectImage(img)">
         }
       </div>
     </div>
