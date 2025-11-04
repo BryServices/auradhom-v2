@@ -45,6 +45,13 @@ export class CartComponent {
     const whatsappLink = this.customerService.getWhatsAppLink(message);
     window.open(whatsappLink, '_blank');
     
+    // Effacer toutes les données après l'envoi du message
+    // Vider le panier
+    this.cart.clear();
+    
+    // Supprimer les informations client
+    this.customerService.clearCustomerInfo();
+    
     // Rediriger vers la page de confirmation
     setTimeout(() => {
       this.router.navigate(['/envoye']);

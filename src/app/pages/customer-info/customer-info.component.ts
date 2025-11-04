@@ -112,7 +112,7 @@ export class CustomerInfoComponent implements OnInit {
     }
 
     confirmOrder(): void {
-        // Sauvegarder les informations client
+        // Sauvegarder temporairement les informations client pour le message
         this.customerService.setCustomerInfo(this.customerForm.value);
         
         // Récupérer les articles du panier
@@ -134,6 +134,13 @@ export class CustomerInfoComponent implements OnInit {
         const message = this.customerService.formatWhatsAppMessage(orderData);
         const whatsappLink = this.customerService.getWhatsAppLink(message);
         window.open(whatsappLink, '_blank');
+        
+        // Effacer toutes les données après l'envoi du message
+        // Vider le panier
+        this.cartService.clear();
+        
+        // Supprimer les informations client
+        this.customerService.clearCustomerInfo();
         
         // Rediriger vers la page de confirmation après un court délai
         setTimeout(() => {

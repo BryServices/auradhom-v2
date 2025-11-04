@@ -53,6 +53,11 @@ export class CustomerService {
             !!customer.district;
     }
 
+    clearCustomerInfo(): void {
+        this.customerInfo.next(null);
+        localStorage.removeItem('customerInfo');
+    }
+
     generateOrderId(): string {
         const timestamp = new Date().getTime();
         const random = Math.floor(Math.random() * 1000);
