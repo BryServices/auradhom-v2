@@ -6,6 +6,7 @@ import { FormatFcfaPipe } from '../../pipes/format-fcfa.pipe';
 import { LucideAngularModule } from 'lucide-angular';
 import { Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
+import { OFFICIAL_WA_ME_NUMBER, OFFICIAL_PHONE_DISPLAY } from '../../shared/constants';
 declare const require: any;
 
 @Component({
@@ -117,9 +118,9 @@ Code postal / Ville :
 Téléphone :
 
 Merci.
+\nContact: ${OFFICIAL_PHONE_DISPLAY}
 `;
-    const whatsappNumber = '237000000000'; // Replace with actual number
-    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${OFFICIAL_WA_ME_NUMBER}?text=${encodeURIComponent(message)}`;
     
     window.open(url, '_blank');
     this.router.navigate(['/envoye']);

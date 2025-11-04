@@ -1,0 +1,5 @@
+export const OFFICIAL_PHONE_DISPLAY = '+242 06 606 0029';
+export const OFFICIAL_PHONE_E164 = '+242066060029';
+export const OFFICIAL_WA_ME_NUMBER = '242066060029';
+export const OFFICIAL_WA_ME_URL = `https://wa.me/${OFFICIAL_WA_ME_NUMBER}`;
+
