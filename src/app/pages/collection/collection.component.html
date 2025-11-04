@@ -28,6 +28,9 @@
             </div>
             <span class="product-price">{{ product.price | formatFcfa }}</span>
           </div>
+          <div class="product-actions">
+            <a [routerLink]="['/produit', product.slug]" class="buy-button">Acheter</a>
+          </div>
           <div class="thumb-row" aria-label="Galerie">
             @if(thumbsById()[product.id]?.length) {
               @for(img of thumbsById()[product.id].slice(0,3); track img; let idx = $index) {

@@ -68,17 +68,21 @@ export class CollectionComponent {
           this.preloadService.findColorThumbnails(firstColor).then(imgs => {
             const next = { ...this.thumbsById() };
             if (imgs.length > 0) {
-              // Prendre les 3 premières images trouvées, ou répéter la première si une seule
-              if (imgs.length === 1) {
-                next[prod.id] = [imgs[0], imgs[0], imgs[0]]; // Répéter pour avoir 3 vignettes
-              } else {
+              // Toujours avoir exactement 3 vignettes
+              if (imgs.length >= 3) {
                 next[prod.id] = imgs.slice(0, 3);
+              } else if (imgs.length === 2) {
+                // Si 2 images, ajouter la première pour avoir 3
+                next[prod.id] = [imgs[0], imgs[1], imgs[0]];
+              } else {
+                // Si 1 seule image, répéter 3 fois
+                next[prod.id] = [imgs[0], imgs[0], imgs[0]];
               }
               const preview = { ...this.previewById() };
               preview[prod.id] = imgs[0];
               this.previewById.set(preview);
             } else {
-              // Fallback : utiliser l'image du produit répétée
+              // Fallback : utiliser l'image du produit répétée 3 fois
               next[prod.id] = [prod.image, prod.image, prod.image];
             }
             this.thumbsById.set(next);

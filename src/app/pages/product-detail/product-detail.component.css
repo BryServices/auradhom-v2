@@ -21,14 +21,29 @@
 
 .thumbnail-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
 }
 
 .thumbnail-grid .thumbnail {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--gray-dark);
+  cursor: pointer;
+  transition: all 200ms ease;
+  background: transparent;
+}
+
+.thumbnail-grid .thumbnail:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
+.thumbnail-grid .thumbnail:active {
+  transform: scale(0.98);
 }
 
 .details h1 {
