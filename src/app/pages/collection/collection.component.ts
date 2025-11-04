@@ -65,15 +65,45 @@ export class CollectionComponent {
           map[prod.id] = defaultImg;
           
           // Chercher les images disponibles de manière asynchrone
-          this.preloadService.findColorThumbnails(firstColor).then(imgs => {
+          this.preloadService.findColorThumbnails(firstColor, 6).then(imgs => {
             const next = { ...this.thumbsById() };
             if (imgs.length > 0) {
-              // Toujours avoir exactement 3 vignettes
+              // Toujours avoir exactement 3 vignettes différentes
               if (imgs.length >= 3) {
+                // Utiliser les 3 premières images trouvées (déjà uniques)
                 next[prod.id] = imgs.slice(0, 3);
               } else if (imgs.length === 2) {
-                // Si 2 images, ajouter la première pour avoir 3
-                next[prod.id] = [imgs[0], imgs[1], imgs[0]];
+                // Si seulement 2 images trouvées, chercher une 3ème source différente
+                const altName = this.normalizeColorName(firstColor);
+                // Essayer plusieurs variantes pour trouver une 3ème image différente
+                const altPaths = [
+                  `assets/infos-T/${altName}/3.png`,
+                  `assets/infos-T/${altName}/3.jpg`,
+                  `assets/infos-T/2/${altName}_3.png`,
+                  `assets/infos-T/1/${altName}_3.jpg`,
+                  `assets/infos-T/1/${altName}_3.png`,
+                  `assets/infos-T/2/${altName}_3.jpg`,
+                  `assets/infos-T/${altName}/2.png`, // Si 1.png et 3.png existent mais pas 2.png
+                  `assets/infos-T/${altName}/1.png`,
+                  `assets/infos-T/2/${altName}_2.png`,
+                  `assets/infos-T/1/${altName}_2.jpg`,
+                  `assets/infos-T/2/${altName}.jpg`, // Variante JPG si PNG déjà utilisé
+                  `assets/infos-T/1/${altName}.png`, // Variante PNG si JPG déjà utilisé
+                  imgs[1] // Fallback : utiliser la 2ème image (sera remplacée si une 3ème différente est trouvée)
+                ];
+                
+                // Chercher la première image disponible qui n'est pas déjà dans la liste
+                this.findFirstAvailableImage(altPaths, imgs).then(thirdImg => {
+                  // Mettre à jour seulement si on a trouvé une image différente
+                  if (thirdImg !== imgs[0] && thirdImg !== imgs[1]) {
+                    const updated = { ...this.thumbsById() };
+                    updated[prod.id] = [imgs[0], imgs[1], thirdImg];
+                    this.thumbsById.set(updated);
+                  }
+                });
+                
+                // Utiliser temporairement la 2ème image pour la 3ème (sera remplacée si une 3ème différente est trouvée)
+                next[prod.id] = [imgs[0], imgs[1], imgs[1]];
               } else {
                 // Si 1 seule image, répéter 3 fois
                 next[prod.id] = [imgs[0], imgs[0], imgs[0]];
@@ -111,6 +141,27 @@ export class CollectionComponent {
 
   private normalizeColorName(name: string): string {
     return (name || '').toString().trim().toLowerCase();
+  }
+
+  private findFirstAvailableImage(paths: string[], excludeUrls: string[]): Promise<string> {
+    const excludeSet = new Set(excludeUrls);
+    const checks = paths.map(path =>
+      new Promise<string | null>((resolve) => {
+        // Si le chemin est déjà dans les exclus, ignorer
+        if (excludeSet.has(path)) {
+          resolve(null);
+          return;
+        }
+        const img = new Image();
+        img.onload = () => resolve(path);
+        img.onerror = () => resolve(null);
+        img.src = path;
+      })
+    );
+    return Promise.all(checks).then(results => {
+      // Retourner la première image trouvée, ou le fallback (dernier élément de paths)
+      return results.find(r => r !== null) || paths[paths.length - 1];
+    });
   }
 
   resolveColorImage(colorName: string): string {

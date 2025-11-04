@@ -32,27 +32,43 @@ export class PreloadService {
     const candidates: string[] = [];
     
     // Priorité 1 : Structure par couleur (assets/infos-T/[couleur]/1.png, 2.png, 3.png)
+    // Cette structure est la plus prioritaire car elle garantit 3 images différentes
     for (let i = 1; i <= 3; i++) {
       candidates.push(`assets/infos-T/${name}/${i}.png`);
       candidates.push(`assets/infos-T/${name}/${i}.jpg`);
     }
     
-    // Priorité 2 : Structure actuelle (dossiers 1 et 2)
-    // Utiliser les images existantes dans 1/[couleur].jpg et 2/[couleur].png
-    candidates.push(`assets/infos-T/2/${name}.png`); // PNG du dossier 2
-    candidates.push(`assets/infos-T/1/${name}.jpg`); // JPG du dossier 1
-    
-    // Si plusieurs images numérotées existent
+    // Priorité 2 : Images numérotées dans les dossiers 1 et 2 (beige_1.jpg, beige_2.png, etc.)
+    // Ces images sont généralement différentes
     for (let i = 1; i <= 3; i++) {
-      candidates.push(`assets/infos-T/1/${name}_${i}.jpg`);
       candidates.push(`assets/infos-T/2/${name}_${i}.png`);
+      candidates.push(`assets/infos-T/1/${name}_${i}.jpg`);
+      candidates.push(`assets/infos-T/1/${name}_${i}.png`);
+      candidates.push(`assets/infos-T/2/${name}_${i}.jpg`);
     }
     
-    // Fallbacks
+    // Priorité 3 : Structure actuelle (dossiers 1 et 2) - seulement si pas déjà trouvé
+    candidates.push(`assets/infos-T/2/${name}.png`); // PNG du dossier 2
+    candidates.push(`assets/infos-T/1/${name}.jpg`); // JPG du dossier 1
     candidates.push(`assets/infos-T/1/${name}.png`);
+    candidates.push(`assets/infos-T/2/${name}.jpg`);
+    
+    // Fallbacks
     candidates.push(`assets/${name}.png`);
+    candidates.push(`assets/${name}.jpg`);
 
-    return this.filterExistingImages(candidates);
+    return this.filterExistingImages(candidates).then(urls => {
+      // Supprimer les doublons en gardant l'ordre de priorité
+      const unique: string[] = [];
+      const seen = new Set<string>();
+      for (const url of urls) {
+        if (!seen.has(url)) {
+          seen.add(url);
+          unique.push(url);
+        }
+      }
+      return unique.slice(0, maxCount);
+    });
   }
   
   getColorImages(colorName: string): string[] {
