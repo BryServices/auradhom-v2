@@ -120,6 +120,10 @@
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+    align-items: center;
+  }
+  .mobile-header-right {
+    display: none;
   }
   .mobile-nav-toggle, .mobile-nav {
     display: none;
@@ -177,6 +181,10 @@
   align-items: center;
   justify-content: center;
   line-height: 1;
+}
+
+.cart-badge:empty {
+  display: none;
 }
 
 .cart-link.bump {

@@ -7,8 +7,24 @@
       <a routerLink="/collection">Collection</a>
       <a routerLink="/a-propos">Philosophie</a>
       <a routerLink="/contact">Contact</a>
+      <a routerLink="/panier" class="cart-link" [class.bump]="animate()" aria-label="Ouvrir le panier">
+        <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M3 7h18" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M6 7l2.5 11.5a2 2 0 0 0 2 1.5h3a2 2 0 0 0 2-1.5L18 7" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M9 7l3-4 3 4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="cart-badge" aria-live="polite">{{ cartCount() }}</span>
+      </a>
     </nav>
     <div class="mobile-header-right">
+      <a routerLink="/panier" class="cart-link" [class.bump]="animate()" aria-label="Ouvrir le panier">
+        <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M3 7h18" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M6 7l2.5 11.5a2 2 0 0 0 2 1.5h3a2 2 0 0 0 2-1.5L18 7" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M9 7l3-4 3 4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="cart-badge" aria-live="polite">{{ cartCount() }}</span>
+      </a>
       <button class="mobile-nav-toggle" (click)="toggleMenu()">
         <span class="bar"></span>
         <span class="bar"></span>
