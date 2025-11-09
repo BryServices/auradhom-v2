@@ -47,10 +47,10 @@ export class CollectionComponent {
     }
 
     return allProducts.filter(p => {
-      const sizeMatch = !hasSilhouette || (filters.silhouette && p.sizes.some(s => filters.silhouette.includes(s)));
-      const typeMatch = !hasType || (filters.type && filters.type.includes(p.type));
-      const materialMatch = !hasMatiere || (filters.matiere && filters.matiere.includes(p.material));
-      const colorMatch = !hasTeinte || (filters.teinte && p.colors.some(c => filters.teinte.includes(c.name)));
+      const sizeMatch = !hasSilhouette || (filters.silhouette?.length && p.sizes.some(s => filters.silhouette!.includes(s)));
+      const typeMatch = !hasType || (filters.type?.length && filters.type.includes(p.type));
+      const materialMatch = !hasMatiere || (filters.matiere?.length && filters.matiere.includes(p.material));
+      const colorMatch = !hasTeinte || (filters.teinte?.length && p.colors.some(c => filters.teinte!.includes(c.name)));
       return sizeMatch && typeMatch && materialMatch && colorMatch;
     });
   });

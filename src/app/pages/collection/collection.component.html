@@ -19,10 +19,10 @@
           <div class="product-info">
             <div class="product-details">
               <span class="product-name">{{ product.name }}</span>
-              @if(product.colors?.length) {
+              @if(product.colors.length) {
                 <span class="product-color">{{ product.colors[0].name }}</span>
               }
-              @if(product.sizes?.length) {
+              @if(product.sizes.length) {
                 <span class="product-sizes">Tailles: {{ product.sizes.join(', ') }}</span>
               }
             </div>
@@ -32,7 +32,7 @@
             <a [routerLink]="['/produit', product.slug]" class="buy-button">Acheter</a>
           </div>
           <div class="thumb-row" aria-label="Galerie">
-            @if(thumbsById()[product.id]?.length) {
+            @if(thumbsById()[product.id] && thumbsById()[product.id].length > 0) {
               @for(img of thumbsById()[product.id].slice(0,3); track img; let idx = $index) {
                 <button 
                   type="button" 

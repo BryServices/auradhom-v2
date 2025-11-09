@@ -50,16 +50,16 @@ export class PdfService {
   }
 
   /**
-   * Dessiner une ligne horizontale
+   * Dessiner une ligne (horizontale ou verticale)
    */
-  private drawLine(doc: any, x1: number, y: number, x2: number, width: number = 0.5, color?: number[]): void {
+  private drawLine(doc: any, x1: number, y1: number, x2: number, y2: number, width: number = 0.5, color?: number[]): void {
     if (color) {
       doc.setDrawColor(color[0], color[1], color[2]);
     } else {
       doc.setDrawColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
     }
     doc.setLineWidth(width);
-    doc.line(x1, y, x2, y);
+    doc.line(x1, y1, x2, y2);
   }
 
   /**
@@ -124,7 +124,7 @@ export class PdfService {
       doc.text('INFORMATIONS CLIENT', margin, yPosition);
       
       yPosition += 8;
-      this.drawLine(doc, margin, yPosition, pageWidth - margin, 0.5);
+      this.drawLine(doc, margin, yPosition, pageWidth - margin, yPosition, 0.5);
       yPosition += 10;
 
       doc.setFontSize(10);
@@ -162,7 +162,7 @@ export class PdfService {
       doc.text('ARTICLES COMMANDÉS', margin, yPosition);
       
       yPosition += 8;
-      this.drawLine(doc, margin, yPosition, pageWidth - margin, 0.5);
+      this.drawLine(doc, margin, yPosition, pageWidth - margin, yPosition, 0.5);
       yPosition += 8;
 
       // En-tête du tableau avec fond gris foncé
@@ -223,7 +223,7 @@ export class PdfService {
 
       // Ligne de séparation avant les totaux
       yPosition += 5;
-      this.drawLine(doc, margin, yPosition, pageWidth - margin, 1);
+      this.drawLine(doc, margin, yPosition, pageWidth - margin, yPosition, 1);
       yPosition += 10;
 
       // ============================================
@@ -280,7 +280,7 @@ export class PdfService {
       // PIED DE PAGE
       // ============================================
       const footerY = pageHeight - 30;
-      this.drawLine(doc, margin, footerY, pageWidth - margin, 0.5);
+      this.drawLine(doc, margin, footerY, pageWidth - margin, footerY, 0.5);
       
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
