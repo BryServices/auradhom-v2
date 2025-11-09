@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { ConfigService } from '../../../services/config.service';
 import { AuthService } from '../../../services/auth.service';
+import { FileStorageService } from '../../../services/file-storage.service';
 
 @Component({
   selector: 'app-settings',
@@ -17,12 +18,14 @@ export class SettingsComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private fileStorageService = inject(FileStorageService);
 
   adminForm: FormGroup;
   whatsappForm: FormGroup;
   
   successMessage = '';
   errorMessage = '';
+  isExporting = false;
 
   constructor() {
     // Initialiser les formulaires dans le constructeur pour satisfaire TypeScript strict mode
@@ -218,6 +221,28 @@ export class SettingsComponent implements OnInit {
         control.markAsTouched();
       }
     });
+  }
+
+  async exportOrders(): Promise<void> {
+    this.isExporting = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+    
+    try {
+      await this.fileStorageService.exportAllOrdersToFile();
+      this.successMessage = 'Commandes exportées avec succès';
+      setTimeout(() => {
+        this.successMessage = '';
+      }, 5000);
+    } catch (error) {
+      this.errorMessage = 'Erreur lors de l\'export des commandes';
+      console.error('Erreur export:', error);
+      setTimeout(() => {
+        this.errorMessage = '';
+      }, 5000);
+    } finally {
+      this.isExporting = false;
+    }
   }
 }
 

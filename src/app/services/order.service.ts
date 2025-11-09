@@ -5,12 +5,14 @@ import { Customer } from '../models/customer';
 import { CartItem } from './cart.service';
 import { NotificationService } from './notification.service';
 import { ApiService } from './api.service';
+import { FileStorageService } from './file-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
   private apiService = inject(ApiService);
+  private fileStorageService = inject(FileStorageService);
   private pendingOrders = signal<PendingOrder[]>([]);
   private validatedOrders = signal<ValidatedOrder[]>([]);
   private rejectedOrders = signal<RejectedOrder[]>([]);
@@ -150,6 +152,11 @@ export class OrderService {
           console.log('✅ Commande sauvegardée dans la base de données:', order.orderId);
           console.log('📦 Articles:', items.length);
           console.log('💰 Total:', order.total, 'FCFA');
+          
+          // SAUVEGARDER AUSSI DANS UN FICHIER POUR BACKUP
+          this.fileStorageService.autoSaveOrder(order).catch(err => {
+            console.warn('⚠️ Erreur lors de la sauvegarde dans le fichier (non bloquant):', err);
+          });
         } else {
           console.error('❌ Échec de la sauvegarde de la commande:', response.error);
           // En cas d'échec, on ajoute quand même localement pour ne pas perdre la commande
@@ -157,6 +164,11 @@ export class OrderService {
           this.pendingOrders.set(orders);
           this.ordersChanged.next();
           console.warn('⚠️ Commande ajoutée localement malgré l\'échec de sauvegarde');
+          
+          // Essayer quand même de sauvegarder dans le fichier
+          this.fileStorageService.autoSaveOrder(order).catch(err => {
+            console.warn('⚠️ Erreur lors de la sauvegarde dans le fichier (non bloquant):', err);
+          });
         }
       },
       error: (error) => {
@@ -167,6 +179,11 @@ export class OrderService {
         this.pendingOrders.set(orders);
         this.ordersChanged.next();
         console.warn('⚠️ Commande ajoutée localement malgré l\'erreur. Elle sera sauvegardée lors du prochain rechargement.');
+        
+        // Essayer quand même de sauvegarder dans le fichier
+        this.fileStorageService.autoSaveOrder(order).catch(err => {
+          console.warn('⚠️ Erreur lors de la sauvegarde dans le fichier (non bloquant):', err);
+        });
       }
     });
 
@@ -197,6 +214,11 @@ export class OrderService {
           this.validatedOrders.set(validated);
 
           this.ordersChanged.next();
+          
+          // Sauvegarder dans le fichier
+          this.fileStorageService.saveOrderToFile(validatedOrder).catch(err => {
+            console.warn('⚠️ Erreur lors de la sauvegarde dans le fichier (non bloquant):', err);
+          });
         }
       },
       error: (error) => {
@@ -232,6 +254,11 @@ export class OrderService {
           this.rejectedOrders.set(rejected);
 
           this.ordersChanged.next();
+          
+          // Sauvegarder dans le fichier
+          this.fileStorageService.saveOrderToFile(rejectedOrder).catch(err => {
+            console.warn('⚠️ Erreur lors de la sauvegarde dans le fichier (non bloquant):', err);
+          });
         }
       },
       error: (error) => {

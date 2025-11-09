@@ -154,6 +154,34 @@
   cursor: not-allowed;
 }
 
+.export-button {
+  padding: 12px 24px;
+  border: 1px solid #28a745;
+  background: transparent;
+  color: #28a745;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+  min-width: 200px;
+  margin-bottom: 10px;
+}
+
+.export-button:hover:not(:disabled) {
+  border-color: #28a745;
+  color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+.export-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .reset-button {
   padding: 12px 24px;
   border: 1px solid #dc3545;
@@ -248,6 +276,13 @@
     min-width: auto;
   }
 
+  .export-button {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 0.8125rem;
+    min-width: auto;
+  }
+
   .reset-button {
     width: 100%;
     padding: 10px 20px;
@@ -275,6 +310,7 @@
   }
 
   .save-button,
+  .export-button,
   .reset-button {
     padding: 8px 16px;
     font-size: 0.75rem;

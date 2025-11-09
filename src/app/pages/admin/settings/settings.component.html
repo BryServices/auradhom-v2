@@ -120,6 +120,24 @@
       </form>
     </div>
 
+    <!-- Section Export des Commandes -->
+    <div class="settings-section">
+      <h2>Export des Commandes</h2>
+      <p class="section-description">Téléchargez toutes les commandes dans un fichier JSON pour archivage ou traitement externe</p>
+      <button 
+        type="button" 
+        class="export-button" 
+        (click)="exportOrders()"
+        [disabled]="isExporting">
+        @if (isExporting) {
+          Export en cours...
+        } @else {
+          Exporter toutes les commandes
+        }
+      </button>
+      <small class="form-hint">Les commandes sont automatiquement sauvegardées dans localStorage. L'export crée un fichier JSON téléchargeable.</small>
+    </div>
+
     <!-- Section Réinitialisation -->
     <div class="settings-section">
       <h2>Réinitialisation</h2>

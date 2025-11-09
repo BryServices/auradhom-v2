@@ -63,6 +63,27 @@ export class PdfService {
   }
 
   /**
+   * Vérifier si un saut de page est nécessaire
+   */
+  private checkPageBreak(doc: any, yPosition: number, requiredSpace: number, pageHeight: number, margin: number): number {
+    if (yPosition + requiredSpace > pageHeight - margin - 20) {
+      doc.addPage();
+      return margin + 10;
+    }
+    return yPosition;
+  }
+
+  /**
+   * Ajouter du texte avec gestion du retour à la ligne automatique
+   */
+  private addText(doc: any, text: string, x: number, y: number, maxWidth: number, fontSize: number = 10): number {
+    doc.setFontSize(fontSize);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    doc.text(lines, x, y);
+    return y + (lines.length * fontSize * 0.35);
+  }
+
+  /**
    * Générer et télécharger le reçu PDF d'une commande validée
    */
   async generateOrderReceipt(order: ValidatedOrder): Promise<void> {
@@ -73,228 +94,280 @@ export class PdfService {
       
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
-      const margin = 20;
+      const margin = 15;
       const contentWidth = pageWidth - 2 * margin;
+      const footerHeight = 25;
+      const minBottomMargin = footerHeight + 10;
       let yPosition = margin;
 
       // ============================================
       // EN-TÊTE AVEC BARRE DE COULEUR
       // ============================================
       // Barre noire en haut
-      this.drawRect(doc, 0, 0, pageWidth, 50, this.COLORS.black);
+      this.drawRect(doc, 0, 0, pageWidth, 45, this.COLORS.black);
       
       // Logo AURADHOM en blanc
       doc.setTextColor(this.COLORS.white[0], this.COLORS.white[1], this.COLORS.white[2]);
-      doc.setFontSize(28);
+      doc.setFontSize(24);
       doc.setFont('helvetica', 'bold');
-      doc.text('AURADHOM', margin, 32);
+      doc.text('AURADHOM', margin, 28);
       
       // Sous-titre
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      doc.text('Reçu de Commande', margin + 70, 32);
+      doc.text('Reçu de Commande', margin + 65, 28);
       
       // Réinitialiser la couleur du texte
       doc.setTextColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
-      yPosition = 60;
+      yPosition = 55;
 
       // ============================================
       // INFORMATIONS DE COMMANDE
       // ============================================
+      yPosition = this.checkPageBreak(doc, yPosition, 35, pageHeight, minBottomMargin);
+      
       // Section avec fond gris clair
-      this.drawRect(doc, margin, yPosition, contentWidth, 35, this.COLORS.grayLight);
+      this.drawRect(doc, margin, yPosition, contentWidth, 30, this.COLORS.grayLight);
       
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text('DÉTAILS DE LA COMMANDE', margin + 5, yPosition + 10);
+      doc.text('DÉTAILS DE LA COMMANDE', margin + 5, yPosition + 8);
       
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      doc.text(`Nº Commande: ${order.orderId}`, margin + 5, yPosition + 18);
-      doc.text(`Date: ${this.formatDate(order.validatedAt)}`, margin + 5, yPosition + 25);
-      doc.text(`Validée par: ${order.validatedBy}`, margin + 100, yPosition + 25);
+      doc.text(`Nº Commande: ${order.orderId}`, margin + 5, yPosition + 15);
+      doc.text(`Date: ${this.formatDate(order.validatedAt)}`, margin + 5, yPosition + 21);
       
-      yPosition += 45;
+      // Validée par sur une nouvelle ligne si nécessaire
+      const validatedByText = `Validée par: ${order.validatedBy}`;
+      const validatedByWidth = doc.getTextWidth(validatedByText);
+      if (validatedByWidth < contentWidth - 10) {
+        doc.text(validatedByText, margin + 5, yPosition + 27);
+      } else {
+        doc.text(`Par: ${order.validatedBy}`, margin + 5, yPosition + 27);
+      }
+      
+      yPosition += 38;
 
       // ============================================
       // INFORMATIONS CLIENT
       // ============================================
-      doc.setFontSize(12);
+      yPosition = this.checkPageBreak(doc, yPosition, 40, pageHeight, minBottomMargin);
+      
+      doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
       doc.text('INFORMATIONS CLIENT', margin, yPosition);
       
-      yPosition += 8;
+      yPosition += 7;
       this.drawLine(doc, margin, yPosition, pageWidth - margin, yPosition, 0.5);
-      yPosition += 10;
+      yPosition += 8;
 
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       
       // Nom complet
       doc.setFont('helvetica', 'bold');
       doc.text(`${order.customer.firstName} ${order.customer.lastName}`, margin, yPosition);
-      yPosition += 7;
+      yPosition += 6;
       
       doc.setFont('helvetica', 'normal');
-      // Adresse
-      doc.text(`Adresse: ${order.customer.address}`, margin, yPosition);
-      yPosition += 6;
+      
+      // Adresse avec gestion du texte long
+      const addressText = `Adresse: ${order.customer.address}`;
+      const addressLines = doc.splitTextToSize(addressText, contentWidth - 5);
+      doc.text(addressLines, margin, yPosition);
+      yPosition += addressLines.length * 4;
       
       // Localisation
       const deptName = this.getDepartmentName(order.customer.department);
       const cityName = this.getCityName(order.customer.department, order.customer.city);
-      doc.text(`${order.customer.district}, ${cityName}, ${deptName}`, margin, yPosition);
-      yPosition += 6;
+      const locationText = `${order.customer.district}, ${cityName}, ${deptName}`;
+      doc.text(locationText, margin, yPosition);
+      yPosition += 5;
       
       // Téléphone
       if (order.customer.phone) {
         doc.text(`Téléphone: ${order.customer.phone}`, margin, yPosition);
-        yPosition += 6;
+        yPosition += 5;
       }
       
-      yPosition += 10;
+      yPosition += 8;
 
       // ============================================
       // ARTICLES - TABLEAU PROFESSIONNEL
       // ============================================
-      doc.setFontSize(12);
+      yPosition = this.checkPageBreak(doc, yPosition, 15, pageHeight, minBottomMargin);
+      
+      doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
       doc.text('ARTICLES COMMANDÉS', margin, yPosition);
       
-      yPosition += 8;
+      yPosition += 7;
       this.drawLine(doc, margin, yPosition, pageWidth - margin, yPosition, 0.5);
-      yPosition += 8;
+      yPosition += 7;
 
       // En-tête du tableau avec fond gris foncé
+      yPosition = this.checkPageBreak(doc, yPosition, 12, pageHeight, minBottomMargin);
       const tableHeaderY = yPosition;
-      this.drawRect(doc, margin, tableHeaderY, contentWidth, 12, this.COLORS.grayDark);
+      this.drawRect(doc, margin, tableHeaderY, contentWidth, 10, this.COLORS.grayDark);
       
       doc.setTextColor(this.COLORS.white[0], this.COLORS.white[1], this.COLORS.white[2]);
-      doc.setFontSize(9);
+      doc.setFontSize(7);
       doc.setFont('helvetica', 'bold');
-      doc.text('Article', margin + 3, tableHeaderY + 8);
-      doc.text('Taille', margin + 70, tableHeaderY + 8);
-      doc.text('Couleur', margin + 90, tableHeaderY + 8);
-      doc.text('Qté', margin + 115, tableHeaderY + 8);
-      doc.text('Prix unit.', margin + 130, tableHeaderY + 8);
-      doc.text('Total', margin + 165, tableHeaderY + 8);
+      doc.text('Article', margin + 2, tableHeaderY + 7);
+      doc.text('Taille', margin + 52, tableHeaderY + 7);
+      doc.text('Couleur', margin + 65, tableHeaderY + 7);
+      doc.text('Qté', margin + 82, tableHeaderY + 7);
+      doc.text('Prix', margin + 92, tableHeaderY + 7);
+      doc.text('Total', margin + 128, tableHeaderY + 7);
       
       doc.setTextColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
-      yPosition += 15;
+      yPosition += 12;
 
       // Lignes du tableau
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
       
       order.items.forEach((item, index) => {
-        // Vérifier si on dépasse la page
-        if (yPosition > pageHeight - 60) {
-          doc.addPage();
-          yPosition = margin;
+        // Vérifier si on a assez d'espace pour une ligne (8px de hauteur)
+        yPosition = this.checkPageBreak(doc, yPosition, 8, pageHeight, minBottomMargin);
+        
+        // Si on a changé de page, redessiner l'en-tête du tableau
+        if (yPosition === margin + 10) {
+          const newTableHeaderY = yPosition;
+          this.drawRect(doc, margin, newTableHeaderY, contentWidth, 10, this.COLORS.grayDark);
+          
+          doc.setTextColor(this.COLORS.white[0], this.COLORS.white[1], this.COLORS.white[2]);
+          doc.setFontSize(7);
+          doc.setFont('helvetica', 'bold');
+          doc.text('Article', margin + 2, newTableHeaderY + 7);
+          doc.text('Taille', margin + 52, newTableHeaderY + 7);
+          doc.text('Couleur', margin + 65, newTableHeaderY + 7);
+          doc.text('Qté', margin + 82, newTableHeaderY + 7);
+          doc.text('Prix', margin + 92, newTableHeaderY + 7);
+          doc.text('Total', margin + 128, newTableHeaderY + 7);
+          
+          doc.setTextColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
+          yPosition += 12;
         }
 
         // Fond alterné pour les lignes
         if (index % 2 === 0) {
-          this.drawRect(doc, margin, yPosition - 5, contentWidth, 10, this.COLORS.grayLight);
+          this.drawRect(doc, margin, yPosition - 4, contentWidth, 8, this.COLORS.grayLight);
         }
-        
-        // Bordures verticales
-        this.drawLine(doc, margin + 65, yPosition - 5, margin + 65, yPosition + 5, 0.1);
-        this.drawLine(doc, margin + 88, yPosition - 5, margin + 88, yPosition + 5, 0.1);
-        this.drawLine(doc, margin + 112, yPosition - 5, margin + 112, yPosition + 5, 0.1);
-        this.drawLine(doc, margin + 128, yPosition - 5, margin + 128, yPosition + 5, 0.1);
-        this.drawLine(doc, margin + 162, yPosition - 5, margin + 162, yPosition + 5, 0.1);
 
         // Nom de l'article (tronqué si trop long)
-        const itemName = item.name.length > 28 ? item.name.substring(0, 25) + '...' : item.name;
-        doc.text(itemName, margin + 3, yPosition);
-        doc.text(item.size || '-', margin + 70, yPosition);
-        doc.text(item.color || '-', margin + 90, yPosition);
-        doc.text(item.quantity.toString(), margin + 115, yPosition);
-        doc.text(this.formatPrice(item.price), margin + 130, yPosition);
+        const maxNameWidth = 48;
+        let itemName = item.name;
+        if (doc.getTextWidth(itemName) > maxNameWidth) {
+          const lines = doc.splitTextToSize(itemName, maxNameWidth);
+          itemName = lines[0];
+          if (lines.length > 1) {
+            itemName = itemName.substring(0, Math.min(itemName.length, 20)) + '...';
+          }
+        }
+        doc.text(itemName, margin + 2, yPosition);
+        doc.text(item.size || '-', margin + 52, yPosition);
+        doc.text(item.color || '-', margin + 65, yPosition);
+        doc.text(item.quantity.toString(), margin + 82, yPosition);
+        
+        // Prix unitaire (formaté court)
+        const priceText = this.formatPriceShort(item.price);
+        doc.text(priceText, margin + 92, yPosition);
         
         // Total de la ligne en gras
         doc.setFont('helvetica', 'bold');
-        doc.text(this.formatPrice(item.price * item.quantity), margin + 165, yPosition);
+        const totalText = this.formatPriceShort(item.price * item.quantity);
+        doc.text(totalText, margin + 128, yPosition);
         doc.setFont('helvetica', 'normal');
         
-        yPosition += 10;
+        yPosition += 8;
       });
 
       // Ligne de séparation avant les totaux
-      yPosition += 5;
-      this.drawLine(doc, margin, yPosition, pageWidth - margin, yPosition, 1);
-      yPosition += 10;
+      yPosition = this.checkPageBreak(doc, yPosition, 35, pageHeight, minBottomMargin);
+      yPosition += 4;
+      this.drawLine(doc, margin, yPosition, pageWidth - margin, yPosition, 0.8);
+      yPosition += 8;
 
       // ============================================
       // TOTAUX - DESIGN PROÉMINENT
       // ============================================
       const totalsStartY = yPosition;
-      const totalsWidth = 80;
+      const totalsWidth = 75;
       const totalsX = pageWidth - margin - totalsWidth;
 
       // Fond gris clair pour les totaux
-      this.drawRect(doc, totalsX, totalsStartY, totalsWidth, 35, this.COLORS.grayLight);
+      this.drawRect(doc, totalsX, totalsStartY, totalsWidth, 28, this.COLORS.grayLight);
       
       // Bordure noire
       doc.setDrawColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
       doc.setLineWidth(1);
-      doc.rect(totalsX, totalsStartY, totalsWidth, 35);
+      doc.rect(totalsX, totalsStartY, totalsWidth, 28);
 
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
-      doc.text('Sous-total:', totalsX + 5, totalsStartY + 8);
-      doc.text(this.formatPrice(order.subtotal), totalsX + 50, totalsStartY + 8);
+      doc.text('Sous-total:', totalsX + 3, totalsStartY + 7);
+      doc.text(this.formatPriceShort(order.subtotal) + ' FCFA', totalsX + 45, totalsStartY + 7);
       
-      doc.text('Livraison:', totalsX + 5, totalsStartY + 15);
-      doc.text(this.formatPrice(order.shippingCost), totalsX + 50, totalsStartY + 15);
+      doc.text('Livraison:', totalsX + 3, totalsStartY + 13);
+      doc.text(this.formatPriceShort(order.shippingCost) + ' FCFA', totalsX + 45, totalsStartY + 13);
       
       // Ligne de séparation
-      this.drawLine(doc, totalsX + 2, totalsStartY + 20, totalsX + totalsWidth - 2, totalsStartY + 20, 0.5);
+      this.drawLine(doc, totalsX + 2, totalsStartY + 18, totalsX + totalsWidth - 2, totalsStartY + 18, 0.5);
       
       // TOTAL en gras et plus grand
-      doc.setFontSize(11);
+      doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
-      doc.text('TOTAL:', totalsX + 5, totalsStartY + 29);
-      doc.text(this.formatPrice(order.total), totalsX + 50, totalsStartY + 29);
+      doc.text('TOTAL:', totalsX + 3, totalsStartY + 24);
+      doc.text(this.formatPriceShort(order.total) + ' FCFA', totalsX + 45, totalsStartY + 24);
       
-      yPosition = totalsStartY + 45;
+      yPosition = totalsStartY + 32;
 
       // ============================================
       // MESSAGE DE REMERCIEMENT
       // ============================================
-      yPosition += 15;
-      doc.setFontSize(11);
+      yPosition = this.checkPageBreak(doc, yPosition, 20, pageHeight, minBottomMargin);
+      yPosition += 10;
+      
+      doc.setFontSize(10);
       doc.setFont('helvetica', 'italic');
       const thankYouText = 'Merci pour votre commande !';
       const thankYouWidth = doc.getTextWidth(thankYouText);
       doc.text(thankYouText, (pageWidth - thankYouWidth) / 2, yPosition);
       
-      yPosition += 8;
-      doc.setFontSize(9);
+      yPosition += 6;
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'italic');
       const tagline = 'Ne dis rien. Sois.';
       const taglineWidth = doc.getTextWidth(tagline);
       doc.text(tagline, (pageWidth - taglineWidth) / 2, yPosition);
 
       // ============================================
-      // PIED DE PAGE
+      // PIED DE PAGE SUR CHAQUE PAGE
       // ============================================
-      const footerY = pageHeight - 30;
-      this.drawLine(doc, margin, footerY, pageWidth - margin, footerY, 0.5);
+      const pageCount = doc.internal.pages.length - 1;
       
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(this.COLORS.grayDark[0], this.COLORS.grayDark[1], this.COLORS.grayDark[2]);
-      
-      const footerText = 'AURADHOM - Streetwear haut de gamme. Silence = Puissance.';
-      const footerWidth = doc.getTextWidth(footerText);
-      doc.text(footerText, (pageWidth - footerWidth) / 2, footerY + 8);
-      
-      // Numéro de page
-      const pageNum = doc.internal.pages.length - 1;
-      doc.text(`Page ${pageNum}`, pageWidth - margin - 15, footerY + 8);
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        const footerY = pageHeight - footerHeight;
+        
+        this.drawLine(doc, margin, footerY, pageWidth - margin, footerY, 0.3);
+        
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(this.COLORS.grayDark[0], this.COLORS.grayDark[1], this.COLORS.grayDark[2]);
+        
+        const footerText = 'AURADHOM - Streetwear haut de gamme. Silence = Puissance.';
+        const footerWidth = doc.getTextWidth(footerText);
+        doc.text(footerText, (pageWidth - footerWidth) / 2, footerY + 6);
+        
+        // Numéro de page
+        doc.text(`Page ${i}/${pageCount}`, pageWidth - margin - 20, footerY + 6);
+      }
 
-      // Réinitialiser la couleur
+      // Revenir à la dernière page
+      doc.setPage(pageCount);
       doc.setTextColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
 
       // ============================================
@@ -320,6 +393,13 @@ export class PdfService {
 
   private formatPrice(price: number): string {
     return `${price.toLocaleString('fr-FR')} FCFA`;
+  }
+
+  /**
+   * Formater un prix de manière courte pour le PDF (sans "FCFA" pour économiser l'espace)
+   */
+  private formatPriceShort(price: number): string {
+    return price.toLocaleString('fr-FR');
   }
 
   private getDepartmentName(departmentId: string): string {
