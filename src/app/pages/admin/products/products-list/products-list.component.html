@@ -1,0 +1,72 @@
+<div class="products-list-container">
+  <div class="header">
+    <h1>Gestion des Produits</h1>
+    <button class="btn-primary" [routerLink]="['/admin/products/new']">
+      + Nouveau produit
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <input 
+      type="text" 
+      [(ngModel)]="searchQuery" 
+      placeholder="Rechercher par nom ou SKU..."
+      class="search-input"
+    />
+    <select [(ngModel)]="selectedStatus" class="filter-select">
+      <option value="">Tous les statuts</option>
+      <option value="draft">Brouillon</option>
+      <option value="active">Actif</option>
+      <option value="inactive">Inactif</option>
+      <option value="archived">Archivé</option>
+    </select>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Chargement...</div>
+  } @else if (filteredProducts().length === 0) {
+    <div class="empty-state">
+      <p>Aucun produit trouvé.</p>
+      <button class="btn-primary" [routerLink]="['/admin/products/new']">
+        Créer un premier produit
+      </button>
+    </div>
+  } @else {
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>SKU</th>
+          <th>Prix</th>
+          <th>Stock</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of filteredProducts(); track product.id) {
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.sku || '-' }}</td>
+            <td>{{ product.pricing?.basePrice | number }} FCFA</td>
+            <td [class.low-stock]="(product.totalStock || 0) < 10">
+              {{ product.totalStock || 0 }}
+            </td>
+            <td>
+              <span [class]="'status-badge ' + getStatusClass(product.status)">
+                {{ getStatusLabel(product.status) }}
+              </span>
+            </td>
+            <td class="actions">
+              <button [routerLink]="['/admin/products', product.id]">Voir</button>
+              <button [routerLink]="['/admin/products', product.id, 'edit']">Éditer</button>
+              <button (click)="duplicateProduct(product.id)">Dupliquer</button>
+              <button (click)="deleteProduct(product.id)" class="btn-danger">Supprimer</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+

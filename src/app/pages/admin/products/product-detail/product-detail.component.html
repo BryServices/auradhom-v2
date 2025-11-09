@@ -1,0 +1,129 @@
+<div class="product-detail-container">
+  @if (loading) {
+    <div class="loading">Chargement...</div>
+  } @else if (errorMessage) {
+    <div class="error-state">
+      <p>{{ errorMessage }}</p>
+      <button [routerLink]="['/admin/products']" class="btn-primary">Retour à la liste</button>
+    </div>
+  } @else if (product) {
+    <div class="header">
+      <div class="header-left">
+        <h1>{{ product.name }}</h1>
+        <p class="product-sku">SKU: {{ product.sku }}</p>
+      </div>
+      <div class="header-actions">
+        <button [routerLink]="['/admin/products', product.id, 'edit']" class="btn-primary">
+          Éditer
+        </button>
+        <button (click)="deleteProduct()" class="btn-danger">
+          Supprimer
+        </button>
+      </div>
+    </div>
+
+    <div class="product-details">
+      <div class="detail-section">
+        <h2>Informations générales</h2>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Statut:</span>
+            <span [class]="'status-badge ' + getStatusClass(product.status)">
+              {{ getStatusLabel(product.status) }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Type:</span>
+            <span>{{ product.type }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Matériau:</span>
+            <span>{{ product.material }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Stock total:</span>
+            <span [class.low-stock]="(product.totalStock || 0) < 10">
+              {{ product.totalStock || 0 }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h2>Prix</h2>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Prix de base:</span>
+            <span>{{ product.pricing?.basePrice | number }} FCFA</span>
+          </div>
+          @if (product.pricing?.compareAtPrice) {
+            <div class="detail-item">
+              <span class="detail-label">Prix comparé:</span>
+              <span>{{ product.pricing.compareAtPrice | number }} FCFA</span>
+            </div>
+          }
+          @if (product.pricing?.costPrice) {
+            <div class="detail-item">
+              <span class="detail-label">Prix de revient:</span>
+              <span>{{ product.pricing.costPrice | number }} FCFA</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h2>Description</h2>
+        <p class="description">{{ product.description || 'Aucune description' }}</p>
+      </div>
+
+      @if (product.variants && product.variants.length > 0) {
+        <div class="detail-section">
+          <h2>Variantes ({{ product.variants.length }})</h2>
+          <table class="variants-table">
+            <thead>
+              <tr>
+                <th>Taille</th>
+                <th>Couleur</th>
+                <th>SKU</th>
+                <th>Stock</th>
+                <th>Prix</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (variant of product.variants; track variant.id) {
+                <tr>
+                  <td>{{ variant.size }}</td>
+                  <td>
+                    <span class="color-badge" [style.background-color]="variant.color?.hex">
+                      {{ variant.color?.name }}
+                    </span>
+                  </td>
+                  <td>{{ variant.sku }}</td>
+                  <td [class.low-stock]="(variant.stock || 0) < 10">
+                    {{ variant.stock || 0 }}
+                  </td>
+                  <td>{{ variant.price ? (variant.price | number) + ' FCFA' : '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <div class="detail-section">
+        <h2>Métadonnées</h2>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Créé le:</span>
+            <span>{{ product.createdAt | date:'short' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Modifié le:</span>
+            <span>{{ product.updatedAt | date:'short' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+

@@ -1,0 +1,157 @@
+<div class="product-form-container">
+  <div class="header">
+    <h1>{{ isEditMode ? 'Éditer le produit' : 'Nouveau produit' }}</h1>
+    <button (click)="cancel()" class="btn-secondary">Annuler</button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="alert alert-success">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (loading && !isEditMode) {
+    <div class="loading">Chargement...</div>
+  } @else {
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+      <div class="form-section">
+        <h2>Informations de base</h2>
+        
+        <div class="form-group">
+          <label for="name">Nom du produit *</label>
+          <input 
+            type="text" 
+            id="name" 
+            formControlName="name" 
+            class="form-control"
+            [class.error]="productForm.get('name')?.invalid && productForm.get('name')?.touched"
+          />
+          @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
+            <span class="error-message">Le nom est requis (minimum 3 caractères)</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="sku">SKU *</label>
+          <div class="input-with-button">
+            <input 
+              type="text" 
+              id="sku" 
+              formControlName="sku" 
+              class="form-control"
+              [class.error]="productForm.get('sku')?.invalid && productForm.get('sku')?.touched"
+            />
+            <button type="button" (click)="generateSKU()" class="btn-generate">Générer</button>
+          </div>
+          @if (productForm.get('sku')?.invalid && productForm.get('sku')?.touched) {
+            <span class="error-message">Le SKU est requis</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea 
+            id="description" 
+            formControlName="description" 
+            class="form-control"
+            rows="4"
+            [class.error]="productForm.get('description')?.invalid && productForm.get('description')?.touched"
+          ></textarea>
+          @if (productForm.get('description')?.invalid && productForm.get('description')?.touched) {
+            <span class="error-message">La description est requise</span>
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="type">Type</label>
+            <select id="type" formControlName="type" class="form-control">
+              <option value="T-shirt">T-shirt</option>
+              <option value="Hoodie">Hoodie</option>
+              <option value="Pantalon">Pantalon</option>
+              <option value="Surchemise">Surchemise</option>
+              <option value="Casquette">Casquette</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="material">Matériau</label>
+            <select id="material" formControlName="material" class="form-control">
+              <option value="Coton lourd">Coton lourd</option>
+              <option value="Laine">Laine</option>
+              <option value="Cuir végétal">Cuir végétal</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="status">Statut</label>
+            <select id="status" formControlName="status" class="form-control">
+              <option value="draft">Brouillon</option>
+              <option value="active">Actif</option>
+              <option value="inactive">Inactif</option>
+              <option value="archived">Archivé</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Prix</h2>
+        <div formGroupName="pricing" class="pricing-group">
+          <div class="form-group">
+            <label for="basePrice">Prix de base (FCFA) *</label>
+            <input 
+              type="number" 
+              id="basePrice" 
+              formControlName="basePrice" 
+              class="form-control"
+              min="0"
+              [class.error]="productForm.get('pricing.basePrice')?.invalid && productForm.get('pricing.basePrice')?.touched"
+            />
+            @if (productForm.get('pricing.basePrice')?.invalid && productForm.get('pricing.basePrice')?.touched) {
+              <span class="error-message">Le prix est requis (minimum 0)</span>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="compareAtPrice">Prix comparé (FCFA)</label>
+              <input 
+                type="number" 
+                id="compareAtPrice" 
+                formControlName="compareAtPrice" 
+                class="form-control"
+                min="0"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="costPrice">Prix de revient (FCFA)</label>
+              <input 
+                type="number" 
+                id="costPrice" 
+                formControlName="costPrice" 
+                class="form-control"
+                min="0"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="cancel()" class="btn-secondary">Annuler</button>
+        <button type="submit" [disabled]="productForm.invalid || loading" class="btn-primary">
+          {{ loading ? 'Enregistrement...' : (isEditMode ? 'Mettre à jour' : 'Créer') }}
+        </button>
+      </div>
+    </form>
+  }
+</div>
+
