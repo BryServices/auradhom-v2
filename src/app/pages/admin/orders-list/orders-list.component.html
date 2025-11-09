@@ -73,38 +73,74 @@
         <div class="order-card">
           <div class="order-header">
             <div class="order-id">
-              <strong>{{ order.orderId }}</strong>
+              <strong class="order-id-text">{{ order.orderId }}</strong>
               <span class="status-badge" [ngClass]="getOrderStatusClass(order.status)">
                 {{ getOrderStatusLabel(order.status) }}
               </span>
             </div>
-            <div class="order-date">{{ formatDate(order.createdAt) }}</div>
+            <div class="order-date">
+              {{ formatDate(order.createdAt) }}
+            </div>
           </div>
 
           <div class="order-customer">
-            <p><strong>{{ order.customer.firstName }} {{ order.customer.lastName }}</strong></p>
-            <p class="customer-details">
-              {{ order.customer.address }}, {{ order.customer.district }}, {{ order.customer.city }}
-            </p>
-            @if (order.phone) {
-              <p class="customer-phone">{{ order.phone }}</p>
-            }
+            <div class="customer-header">
+              <p class="customer-name"><strong>{{ order.customer.firstName }} {{ order.customer.lastName }}</strong></p>
+            </div>
+            <div class="customer-details">
+              <p class="customer-address">
+                {{ order.customer.address }}, {{ order.customer.district }}, {{ order.customer.city }}
+              </p>
+              @if (order.phone) {
+                <p class="customer-phone">
+                  {{ order.phone }}
+                </p>
+              }
+            </div>
           </div>
 
           <div class="order-items">
-            <p class="items-count">{{ order.items.length }} article(s)</p>
-            <ul class="items-list">
+            <div class="items-header">
+              <p class="items-count">
+                {{ order.items.length }} article(s)
+              </p>
+            </div>
+            <div class="items-grid">
               @for (item of order.items.slice(0, 3); track item.productId) {
-                <li>{{ item.name }} (x{{ item.quantity }})</li>
+                <div class="item-card">
+                  @if (item.image) {
+                    <img [src]="item.image" [alt]="item.name" class="item-thumbnail" />
+                  }
+                  <div class="item-info">
+                    <p class="item-name">{{ item.name }}</p>
+                    <p class="item-specs">
+                      @if (item.size) {
+                        <span>Taille: {{ item.size }}</span>
+                      }
+                      @if (item.color) {
+                        <span>Couleur: {{ item.color }}</span>
+                      }
+                    </p>
+                    <p class="item-qty-price">
+                      <span class="quantity">Qté: {{ item.quantity }}</span>
+                      <span class="price">{{ (item.price * item.quantity) | formatFcfa }}</span>
+                    </p>
+                  </div>
+                </div>
               }
               @if (order.items.length > 3) {
-                <li class="more-items">... et {{ order.items.length - 3 }} autre(s)</li>
+                <div class="more-items-card">
+                  <span class="more-items-text">+ {{ order.items.length - 3 }} autre(s) article(s)</span>
+                </div>
               }
-            </ul>
+            </div>
           </div>
 
           <div class="order-total">
-            <strong>Total: {{ order.total | formatFcfa }}</strong>
+            <div class="total-content">
+              <span class="total-label">Total</span>
+              <strong class="total-amount">{{ order.total | formatFcfa }}</strong>
+            </div>
           </div>
 
           <div class="order-actions">
