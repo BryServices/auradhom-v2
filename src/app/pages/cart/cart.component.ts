@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { CustomerService } from '../../services/customer.service';
+import { OrderService } from '../../services/order.service';
 import { FormatFcfaPipe } from '../../pipes/format-fcfa.pipe';
 
 @Component({
@@ -15,6 +16,7 @@ import { FormatFcfaPipe } from '../../pipes/format-fcfa.pipe';
 export class CartComponent {
   private cart = inject(CartService);
   private customerService = inject(CustomerService);
+  private orderService = inject(OrderService);
   private router = inject(Router);
   
   items = this.cart.getItems();
@@ -33,7 +35,14 @@ export class CartComponent {
       return;
     }
 
-    // Si les infos sont complètes, générer le message WhatsApp directement
+    // Récupérer les informations client (valeur synchrone)
+    const customer = this.customerService.getCustomerInfoValue();
+    if (!customer) {
+      this.router.navigate(['/customer-info']);
+      return;
+    }
+
+    // Préparer les données de commande
     const orderData = {
       items: cartItems,
       subtotal: this.cart.getSubtotal(),
@@ -41,11 +50,19 @@ export class CartComponent {
       total: this.total()
     };
 
+    // Générer le message WhatsApp
     const message = this.customerService.formatWhatsAppMessage(orderData);
+    
+    // IMPORTANT: CRÉER ET SAUVEGARDER LA COMMANDE DANS LA BASE DE DONNÉES
+    // La commande doit être sauvegardée dans la BD avant d'ouvrir WhatsApp
+    // Cela garantit que toutes les commandes sont stockées pour être gérées dans le dashboard
+    this.orderService.createPendingOrder(customer, cartItems, message);
+    
+    // Ouvrir WhatsApp
     const whatsappLink = this.customerService.getWhatsAppLink(message);
     window.open(whatsappLink, '_blank');
     
-    // Effacer toutes les données après l'envoi du message
+    // Effacer les données après la sauvegarde de la commande
     // Vider le panier
     this.cart.clear();
     

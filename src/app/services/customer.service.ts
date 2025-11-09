@@ -42,6 +42,14 @@ export class CustomerService {
         return this.customerInfo.asObservable();
     }
 
+    /**
+     * Obtenir les informations client de manière synchrone
+     * Utile pour créer une commande sans avoir à souscrire à l'Observable
+     */
+    getCustomerInfoValue(): Customer | null {
+        return this.customerInfo.value;
+    }
+
     hasRequiredInfo(): boolean {
         const customer = this.customerInfo.value;
         return customer !== null &&
@@ -50,7 +58,8 @@ export class CustomerService {
             !!customer.address &&
             !!customer.department &&
             !!customer.city &&
-            !!customer.district;
+            !!customer.district &&
+            !!customer.phone; // Ajouter la vérification du téléphone
     }
 
     clearCustomerInfo(): void {

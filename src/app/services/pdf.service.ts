@@ -9,6 +9,15 @@ export class PdfService {
   private customerService = inject(CustomerService);
   private jsPDFModule: any = null;
 
+  // Couleurs de la marque AURADHOM
+  private readonly COLORS = {
+    black: [0, 0, 0],
+    white: [255, 255, 255],
+    grayDark: [28, 28, 28],
+    sand: [216, 210, 201],
+    grayLight: [240, 240, 240]
+  };
+
   /**
    * Charger jsPDF dynamiquement
    */
@@ -33,6 +42,27 @@ export class PdfService {
   }
 
   /**
+   * Dessiner un rectangle avec couleur de fond
+   */
+  private drawRect(doc: any, x: number, y: number, width: number, height: number, color: number[]): void {
+    doc.setFillColor(color[0], color[1], color[2]);
+    doc.rect(x, y, width, height, 'F');
+  }
+
+  /**
+   * Dessiner une ligne horizontale
+   */
+  private drawLine(doc: any, x1: number, y: number, x2: number, width: number = 0.5, color?: number[]): void {
+    if (color) {
+      doc.setDrawColor(color[0], color[1], color[2]);
+    } else {
+      doc.setDrawColor(...this.COLORS.black);
+    }
+    doc.setLineWidth(width);
+    doc.line(x1, y, x2, y);
+  }
+
+  /**
    * Générer et télécharger le reçu PDF d'une commande validée
    */
   async generateOrderReceipt(order: ValidatedOrder): Promise<void> {
@@ -42,141 +72,234 @@ export class PdfService {
       const doc = new JsPDF();
       
       const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
       const margin = 20;
       const contentWidth = pageWidth - 2 * margin;
       let yPosition = margin;
 
-      // Fonction pour ajouter du texte avec gestion de la pagination
-      const addText = (text: string, x: number, y: number, options: any = {}) => {
-        const maxWidth = options.maxWidth || contentWidth;
-        const lines = doc.splitTextToSize(text, maxWidth);
-        doc.text(lines, x, y);
-        return lines.length * (options.lineHeight || 7);
-      };
-
-      // Logo et en-tête
-      doc.setFontSize(20);
+      // ============================================
+      // EN-TÊTE AVEC BARRE DE COULEUR
+      // ============================================
+      // Barre noire en haut
+      this.drawRect(doc, 0, 0, pageWidth, 50, this.COLORS.black);
+      
+      // Logo AURADHOM en blanc
+      doc.setTextColor(...this.COLORS.white);
+      doc.setFontSize(28);
       doc.setFont('helvetica', 'bold');
-      yPosition += addText('AURADHOM', margin, yPosition, { maxWidth: contentWidth });
+      doc.text('AURADHOM', margin, 32);
+      
+      // Sous-titre
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Reçu de Commande', margin + 70, 32);
+      
+      // Réinitialiser la couleur du texte
+      doc.setTextColor(...this.COLORS.black);
+      yPosition = 60;
+
+      // ============================================
+      // INFORMATIONS DE COMMANDE
+      // ============================================
+      // Section avec fond gris clair
+      this.drawRect(doc, margin, yPosition, contentWidth, 35, this.COLORS.grayLight);
+      
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('DÉTAILS DE LA COMMANDE', margin + 5, yPosition + 10);
       
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
-      yPosition += 5;
-      yPosition += addText('Reçu de Commande', margin, yPosition);
+      doc.text(`Nº Commande: ${order.orderId}`, margin + 5, yPosition + 18);
+      doc.text(`Date: ${this.formatDate(order.validatedAt)}`, margin + 5, yPosition + 25);
+      doc.text(`Validée par: ${order.validatedBy}`, margin + 100, yPosition + 25);
+      
+      yPosition += 45;
 
-      // Ligne de séparation
-      yPosition += 10;
-      doc.setLineWidth(0.5);
-      doc.line(margin, yPosition, pageWidth - margin, yPosition);
-      yPosition += 10;
-
-      // Informations de commande
+      // ============================================
+      // INFORMATIONS CLIENT
+      // ============================================
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      yPosition += addText(`Commande Nº: ${order.orderId}`, margin, yPosition);
+      doc.text('INFORMATIONS CLIENT', margin, yPosition);
       
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      yPosition += 7;
-      yPosition += addText(`Date: ${this.formatDate(order.validatedAt)}`, margin, yPosition);
-      yPosition += 7;
-      yPosition += addText(`Validée par: ${order.validatedBy}`, margin, yPosition);
-
+      yPosition += 8;
+      this.drawLine(doc, margin, yPosition, pageWidth - margin, 0.5);
       yPosition += 10;
 
-      // Informations client
-      doc.setFontSize(12);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      
+      // Nom complet
       doc.setFont('helvetica', 'bold');
-      yPosition += addText('Informations Client', margin, yPosition);
+      doc.text(`${order.customer.firstName} ${order.customer.lastName}`, margin, yPosition);
+      yPosition += 7;
       
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      yPosition += 7;
-      yPosition += addText(`${order.customer.firstName} ${order.customer.lastName}`, margin, yPosition);
-      yPosition += 7;
-      yPosition += addText(`Adresse: ${order.customer.address}`, margin, yPosition);
-      yPosition += 7;
+      // Adresse
+      doc.text(`Adresse: ${order.customer.address}`, margin, yPosition);
+      yPosition += 6;
       
-      // Récupérer les noms de département et ville
+      // Localisation
       const deptName = this.getDepartmentName(order.customer.department);
       const cityName = this.getCityName(order.customer.department, order.customer.city);
-      yPosition += addText(`${order.customer.district}, ${cityName}, ${deptName}`, margin, yPosition);
+      doc.text(`${order.customer.district}, ${cityName}, ${deptName}`, margin, yPosition);
+      yPosition += 6;
       
+      // Téléphone
       if (order.customer.phone) {
-        yPosition += 7;
-        yPosition += addText(`Téléphone: ${order.customer.phone}`, margin, yPosition);
+        doc.text(`Téléphone: ${order.customer.phone}`, margin, yPosition);
+        yPosition += 6;
       }
-
+      
       yPosition += 10;
 
-      // Articles
+      // ============================================
+      // ARTICLES - TABLEAU PROFESSIONNEL
+      // ============================================
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      yPosition += addText('Articles', margin, yPosition);
-      yPosition += 5;
+      doc.text('ARTICLES COMMANDÉS', margin, yPosition);
+      
+      yPosition += 8;
+      this.drawLine(doc, margin, yPosition, pageWidth - margin, 0.5);
+      yPosition += 8;
 
-      // Tableau des articles
-      doc.setFontSize(10);
+      // En-tête du tableau avec fond gris foncé
+      const tableHeaderY = yPosition;
+      this.drawRect(doc, margin, tableHeaderY, contentWidth, 12, this.COLORS.grayDark);
+      
+      doc.setTextColor(...this.COLORS.white);
+      doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      doc.text('Article', margin, yPosition);
-      doc.text('Taille', margin + 60, yPosition);
-      doc.text('Couleur', margin + 85, yPosition);
-      doc.text('Qté', margin + 115, yPosition);
-      doc.text('Prix', margin + 135, yPosition);
-      doc.text('Total', margin + 165, yPosition);
+      doc.text('Article', margin + 3, tableHeaderY + 8);
+      doc.text('Taille', margin + 70, tableHeaderY + 8);
+      doc.text('Couleur', margin + 90, tableHeaderY + 8);
+      doc.text('Qté', margin + 115, tableHeaderY + 8);
+      doc.text('Prix unit.', margin + 130, tableHeaderY + 8);
+      doc.text('Total', margin + 165, tableHeaderY + 8);
+      
+      doc.setTextColor(...this.COLORS.black);
+      yPosition += 15;
 
-      yPosition += 7;
-      doc.setLineWidth(0.2);
-      doc.line(margin, yPosition, pageWidth - margin, yPosition);
-      yPosition += 5;
-
+      // Lignes du tableau
+      doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      order.items.forEach(item => {
+      
+      order.items.forEach((item, index) => {
         // Vérifier si on dépasse la page
-        if (yPosition > doc.internal.pageSize.getHeight() - 40) {
+        if (yPosition > pageHeight - 60) {
           doc.addPage();
           yPosition = margin;
         }
 
-        const itemName = item.name.length > 25 ? item.name.substring(0, 22) + '...' : item.name;
-        doc.text(itemName, margin, yPosition);
-        doc.text(item.size || '-', margin + 60, yPosition);
-        doc.text(item.color || '-', margin + 85, yPosition);
+        // Fond alterné pour les lignes
+        if (index % 2 === 0) {
+          this.drawRect(doc, margin, yPosition - 5, contentWidth, 10, this.COLORS.grayLight);
+        }
+        
+        // Bordures verticales
+        this.drawLine(doc, margin + 65, yPosition - 5, margin + 65, yPosition + 5, 0.1);
+        this.drawLine(doc, margin + 88, yPosition - 5, margin + 88, yPosition + 5, 0.1);
+        this.drawLine(doc, margin + 112, yPosition - 5, margin + 112, yPosition + 5, 0.1);
+        this.drawLine(doc, margin + 128, yPosition - 5, margin + 128, yPosition + 5, 0.1);
+        this.drawLine(doc, margin + 162, yPosition - 5, margin + 162, yPosition + 5, 0.1);
+
+        // Nom de l'article (tronqué si trop long)
+        const itemName = item.name.length > 28 ? item.name.substring(0, 25) + '...' : item.name;
+        doc.text(itemName, margin + 3, yPosition);
+        doc.text(item.size || '-', margin + 70, yPosition);
+        doc.text(item.color || '-', margin + 90, yPosition);
         doc.text(item.quantity.toString(), margin + 115, yPosition);
-        doc.text(this.formatPrice(item.price), margin + 135, yPosition);
+        doc.text(this.formatPrice(item.price), margin + 130, yPosition);
+        
+        // Total de la ligne en gras
+        doc.setFont('helvetica', 'bold');
         doc.text(this.formatPrice(item.price * item.quantity), margin + 165, yPosition);
-        yPosition += 7;
+        doc.setFont('helvetica', 'normal');
+        
+        yPosition += 10;
       });
 
+      // Ligne de séparation avant les totaux
       yPosition += 5;
-      doc.setLineWidth(0.5);
-      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      this.drawLine(doc, margin, yPosition, pageWidth - margin, 1);
       yPosition += 10;
 
-      // Totaux
+      // ============================================
+      // TOTAUX - DESIGN PROÉMINENT
+      // ============================================
+      const totalsStartY = yPosition;
+      const totalsWidth = 80;
+      const totalsX = pageWidth - margin - totalsWidth;
+
+      // Fond gris clair pour les totaux
+      this.drawRect(doc, totalsX, totalsStartY, totalsWidth, 35, this.COLORS.grayLight);
+      
+      // Bordure noire
+      doc.setDrawColor(...this.COLORS.black);
+      doc.setLineWidth(1);
+      doc.rect(totalsX, totalsStartY, totalsWidth, 35);
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Sous-total:', totalsX + 5, totalsStartY + 8);
+      doc.text(this.formatPrice(order.subtotal), totalsX + 50, totalsStartY + 8);
+      
+      doc.text('Livraison:', totalsX + 5, totalsStartY + 15);
+      doc.text(this.formatPrice(order.shippingCost), totalsX + 50, totalsStartY + 15);
+      
+      // Ligne de séparation
+      this.drawLine(doc, totalsX + 2, totalsStartY + 20, totalsX + totalsWidth - 2, totalsStartY + 20, 0.5);
+      
+      // TOTAL en gras et plus grand
+      doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
-      doc.text('Sous-total:', margin + 100, yPosition);
-      doc.text(this.formatPrice(order.subtotal), margin + 165, yPosition);
-      yPosition += 7;
+      doc.text('TOTAL:', totalsX + 5, totalsStartY + 29);
+      doc.text(this.formatPrice(order.total), totalsX + 50, totalsStartY + 29);
+      
+      yPosition = totalsStartY + 45;
 
-      doc.text('Frais de livraison:', margin + 100, yPosition);
-      doc.text(this.formatPrice(order.shippingCost), margin + 165, yPosition);
-      yPosition += 7;
-
-      doc.setFontSize(12);
-      doc.text('TOTAL:', margin + 100, yPosition);
-      doc.text(this.formatPrice(order.total), margin + 165, yPosition);
-
+      // ============================================
+      // MESSAGE DE REMERCIEMENT
+      // ============================================
       yPosition += 15;
-
-      // Message de remerciement
-      doc.setFontSize(10);
+      doc.setFontSize(11);
       doc.setFont('helvetica', 'italic');
       const thankYouText = 'Merci pour votre commande !';
       const thankYouWidth = doc.getTextWidth(thankYouText);
       doc.text(thankYouText, (pageWidth - thankYouWidth) / 2, yPosition);
+      
+      yPosition += 8;
+      doc.setFontSize(9);
+      const tagline = 'Ne dis rien. Sois.';
+      const taglineWidth = doc.getTextWidth(tagline);
+      doc.text(tagline, (pageWidth - taglineWidth) / 2, yPosition);
 
-      // Télécharger le PDF
+      // ============================================
+      // PIED DE PAGE
+      // ============================================
+      const footerY = pageHeight - 30;
+      this.drawLine(doc, margin, footerY, pageWidth - margin, 0.5);
+      
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...this.COLORS.grayDark);
+      
+      const footerText = 'AURADHOM - Streetwear haut de gamme. Silence = Puissance.';
+      const footerWidth = doc.getTextWidth(footerText);
+      doc.text(footerText, (pageWidth - footerWidth) / 2, footerY + 8);
+      
+      // Numéro de page
+      const pageNum = doc.internal.pages.length - 1;
+      doc.text(`Page ${pageNum}`, pageWidth - margin - 15, footerY + 8);
+
+      // Réinitialiser la couleur
+      doc.setTextColor(...this.COLORS.black);
+
+      // ============================================
+      // TÉLÉCHARGER LE PDF
+      // ============================================
       doc.save(`commande-${order.orderId}.pdf`);
     } catch (error) {
       console.error('Erreur lors de la génération du PDF:', error);

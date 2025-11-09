@@ -104,28 +104,42 @@ export class OrderService {
 
   // Créer une nouvelle commande en attente
   // IMPORTANT: La commande est IMMÉDIATEMENT sauvegardée dans la base de données via l'API
+  // TOUTES les commandes créées sur le site doivent être stockées pour être gérées dans le dashboard
   createPendingOrder(
     customer: Customer,
     items: CartItem[],
     whatsappMessage: string
   ): PendingOrder {
+    // Vérifier que les données sont valides
+    if (!customer || !items || items.length === 0) {
+      console.error('Données de commande invalides');
+      throw new Error('Données de commande invalides');
+    }
+
+    // Vérifier que le client a un téléphone (requis)
+    if (!customer.phone || customer.phone.trim() === '') {
+      console.error('Le numéro de téléphone est requis pour créer une commande');
+      throw new Error('Le numéro de téléphone est requis');
+    }
+
     const orderId = this.generateOrderId();
     const order: PendingOrder = {
       id: this.generateId(),
       orderId: orderId,
-      customer: customer,
-      items: items.map(item => ({ ...item })),
+      customer: { ...customer }, // Copie pour éviter les modifications
+      items: items.map(item => ({ ...item })), // Copie des articles
       subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
       shippingCost: 0,
       total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
       status: OrderStatus.PENDING,
       createdAt: new Date(),
       whatsappMessage: whatsappMessage,
-      phone: customer.phone || ''
+      phone: customer.phone.trim()
     };
 
     // SAUVEGARDER IMMÉDIATEMENT DANS LA BASE DE DONNÉES VIA L'API
     // La commande est stockée dans la BD avant d'être visible dans le dashboard
+    // Cela garantit que TOUTES les commandes sont stockées pour être gérées
     this.apiService.createPendingOrder(order).subscribe({
       next: (response) => {
         if (response.success) {
@@ -133,17 +147,26 @@ export class OrderService {
           const orders = [...this.pendingOrders(), order];
           this.pendingOrders.set(orders);
           this.ordersChanged.next();
-          console.log('Commande sauvegardée dans la base de données:', order.orderId);
+          console.log('✅ Commande sauvegardée dans la base de données:', order.orderId);
+          console.log('📦 Articles:', items.length);
+          console.log('💰 Total:', order.total, 'FCFA');
         } else {
-          console.error('Échec de la sauvegarde de la commande:', response.error);
+          console.error('❌ Échec de la sauvegarde de la commande:', response.error);
+          // En cas d'échec, on ajoute quand même localement pour ne pas perdre la commande
+          const orders = [...this.pendingOrders(), order];
+          this.pendingOrders.set(orders);
+          this.ordersChanged.next();
+          console.warn('⚠️ Commande ajoutée localement malgré l\'échec de sauvegarde');
         }
       },
       error: (error) => {
-        console.error('Erreur lors de la création de la commande dans la BD', error);
+        console.error('❌ Erreur lors de la création de la commande dans la BD', error);
         // Même en cas d'erreur, on ajoute localement pour ne pas perdre la commande
+        // La commande sera synchronisée lors du prochain rechargement
         const orders = [...this.pendingOrders(), order];
         this.pendingOrders.set(orders);
         this.ordersChanged.next();
+        console.warn('⚠️ Commande ajoutée localement malgré l\'erreur. Elle sera sauvegardée lors du prochain rechargement.');
       }
     });
 
