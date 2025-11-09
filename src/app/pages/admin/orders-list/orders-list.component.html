@@ -1,0 +1,164 @@
+<div class="orders-list-container">
+  <div class="orders-header">
+    <h2>
+      @if (orderType() === 'pending') {
+        Commandes en attente
+      } @else if (orderType() === 'validated') {
+        Commandes validées
+      } @else if (orderType() === 'rejected') {
+        Commandes rejetées
+      } @else {
+        Toutes les commandes
+      }
+    </h2>
+    <p class="orders-count">{{ orders().length }} commande(s)</p>
+  </div>
+
+  <!-- Filtres de recherche -->
+  <div class="filters-section">
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Recherche</label>
+        <input
+          type="text"
+          [value]="searchTerm()"
+          (input)="searchTerm.set($any($event.target).value); onSearch()"
+          placeholder="Nº commande, nom client..."
+        />
+      </div>
+      <div class="filter-group">
+        <label>Date début</label>
+        <input
+          type="date"
+          [value]="dateFrom()"
+          (change)="dateFrom.set($any($event.target).value); onFilterChange()"
+        />
+      </div>
+      <div class="filter-group">
+        <label>Date fin</label>
+        <input
+          type="date"
+          [value]="dateTo()"
+          (change)="dateTo.set($any($event.target).value); onFilterChange()"
+        />
+      </div>
+      @if (orderType() === 'all') {
+        <div class="filter-group">
+          <label>Statut</label>
+          <select
+            [value]="statusFilter()"
+            (change)="statusFilter.set($any($event.target).value); onFilterChange()"
+          >
+            <option value="all">Tous</option>
+            <option [value]="'pending'">En attente</option>
+            <option [value]="'validated'">Validée</option>
+            <option [value]="'rejected'">Rejetée</option>
+          </select>
+        </div>
+      }
+      <div class="filter-actions">
+        <button (click)="clearFilters()" class="clear-filters-button">Réinitialiser</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des commandes -->
+  <div class="orders-grid">
+    @if (orders().length === 0) {
+      <div class="no-orders">
+        <p>Aucune commande trouvée</p>
+      </div>
+    } @else {
+      @for (order of orders(); track order.id) {
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-id">
+              <strong>{{ order.orderId }}</strong>
+              <span class="status-badge" [ngClass]="getOrderStatusClass(order.status)">
+                {{ getOrderStatusLabel(order.status) }}
+              </span>
+            </div>
+            <div class="order-date">{{ formatDate(order.createdAt) }}</div>
+          </div>
+
+          <div class="order-customer">
+            <p><strong>{{ order.customer.firstName }} {{ order.customer.lastName }}</strong></p>
+            <p class="customer-details">
+              {{ order.customer.address }}, {{ order.customer.district }}, {{ order.customer.city }}
+            </p>
+            @if (order.phone) {
+              <p class="customer-phone">{{ order.phone }}</p>
+            }
+          </div>
+
+          <div class="order-items">
+            <p class="items-count">{{ order.items.length }} article(s)</p>
+            <ul class="items-list">
+              @for (item of order.items.slice(0, 3); track item.productId) {
+                <li>{{ item.name }} (x{{ item.quantity }})</li>
+              }
+              @if (order.items.length > 3) {
+                <li class="more-items">... et {{ order.items.length - 3 }} autre(s)</li>
+              }
+            </ul>
+          </div>
+
+          <div class="order-total">
+            <strong>Total: {{ order.total | formatFcfa }}</strong>
+          </div>
+
+          <div class="order-actions">
+            <button (click)="viewOrder(order.id)" class="action-button view-button">Voir détails</button>
+            
+            @if (order.status === 'pending') {
+              <button (click)="validateOrder(order)" class="action-button validate-button">Valider</button>
+              <button (click)="openRejectionModal(order)" class="action-button reject-button">Rejeter</button>
+            }
+            
+            @if (order.status === 'validated') {
+              <button (click)="downloadReceipt(order)" class="action-button download-button">Télécharger PDF</button>
+            }
+          </div>
+
+          @if (order.status === 'rejected' && 'rejectionReason' in order) {
+            <div class="rejection-reason">
+              <strong>Motif du rejet:</strong> {{ order.rejectionReason }}
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Modal de rejet -->
+  @if (showRejectionModal()) {
+    <div class="modal-overlay" (click)="closeRejectionModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Rejeter la commande</h3>
+          <button (click)="closeRejectionModal()" class="close-button">×</button>
+        </div>
+        <div class="modal-body">
+          <p>Vous êtes sur le point de rejeter la commande <strong>{{ selectedOrder()?.orderId }}</strong>.</p>
+          <div class="form-group">
+            <label for="rejectionReason">Motif du rejet *</label>
+            <textarea
+              id="rejectionReason"
+              [value]="rejectionReason()"
+              (input)="rejectionReason.set($any($event.target).value)"
+              placeholder="Indiquez le motif du rejet..."
+              rows="4"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button (click)="closeRejectionModal()" class="cancel-button">Annuler</button>
+          <button (click)="rejectOrder()" class="confirm-button" [disabled]="!rejectionReason().trim()">
+            Confirmer le rejet
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+

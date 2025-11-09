@@ -1,0 +1,165 @@
+@if (order) {
+  <div class="order-detail-container">
+    <div class="detail-header">
+      <button routerLink="/admin/dashboard" class="back-button">← Retour</button>
+      <div class="header-info">
+        <h1>Commande {{ order.orderId }}</h1>
+        <span class="status-badge" [ngClass]="'status-' + order.status">
+          @if (order.status === 'pending') {
+            En attente
+          } @else if (order.status === 'validated') {
+            Validée
+          } @else {
+            Rejetée
+          }
+        </span>
+      </div>
+    </div>
+
+    <div class="detail-content">
+      <div class="detail-section">
+        <h2>Informations client</h2>
+        <div class="info-card">
+          <p><strong>Nom:</strong> {{ order.customer.firstName }} {{ order.customer.lastName }}</p>
+          <p><strong>Adresse:</strong> {{ order.customer.address }}</p>
+          <p><strong>Quartier:</strong> {{ order.customer.district }}</p>
+          <p><strong>Ville:</strong> {{ order.customer.city }}</p>
+          @if (order.phone) {
+            <p><strong>Téléphone:</strong> {{ order.phone }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h2>Articles</h2>
+        <div class="items-card">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Article</th>
+                <th>Taille</th>
+                <th>Couleur</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of order.items; track item.productId) {
+                <tr>
+                  <td>
+                    <div class="item-info">
+                      <img [src]="item.image" [alt]="item.name" class="item-image" />
+                      <span>{{ item.name }}</span>
+                    </div>
+                  </td>
+                  <td>{{ item.size || '-' }}</td>
+                  <td>{{ item.color || '-' }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.price | formatFcfa }}</td>
+                  <td><strong>{{ item.price * item.quantity | formatFcfa }}</strong></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h2>Récapitulatif</h2>
+        <div class="summary-card">
+          <div class="summary-row">
+            <span>Sous-total:</span>
+            <span>{{ order.subtotal | formatFcfa }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Frais de livraison:</span>
+            <span>{{ order.shippingCost | formatFcfa }}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span>{{ order.total | formatFcfa }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h2>Informations de commande</h2>
+        <div class="info-card">
+          <p><strong>Date de création:</strong> {{ formatDate(order.createdAt) }}</p>
+          @if (order.status === 'validated') {
+            <p><strong>Date de validation:</strong> {{ formatDate(order.validatedAt) }}</p>
+            <p><strong>Validée par:</strong> {{ order.validatedBy }}</p>
+          }
+          @if (order.status === 'rejected') {
+            <p><strong>Date de rejet:</strong> {{ formatDate(order.rejectedAt) }}</p>
+            <p><strong>Rejetée par:</strong> {{ order.rejectedBy }}</p>
+            <p><strong>Motif du rejet:</strong> {{ order.rejectionReason }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h2>Message WhatsApp</h2>
+        <div class="whatsapp-card">
+          <pre class="whatsapp-message">{{ order.whatsappMessage }}</pre>
+          <div class="whatsapp-actions">
+            <button (click)="copyWhatsAppMessage()" class="action-button copy-button">
+              Copier le message
+            </button>
+            @if (order.phone) {
+              <button (click)="openWhatsApp()" class="action-button whatsapp-button">
+                Ouvrir WhatsApp
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-actions">
+      @if (order.status === 'pending') {
+        <button (click)="validateOrder()" class="action-button validate-button">Valider la commande</button>
+        <button (click)="openRejectionModal()" class="action-button reject-button">Rejeter la commande</button>
+      }
+      @if (order.status === 'validated') {
+        <button (click)="downloadReceipt()" class="action-button download-button">Télécharger le reçu PDF</button>
+      }
+    </div>
+
+    <!-- Modal de rejet -->
+    @if (showRejectionModal) {
+      <div class="modal-overlay" (click)="closeRejectionModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>Rejeter la commande</h3>
+            <button (click)="closeRejectionModal()" class="close-button">×</button>
+          </div>
+          <div class="modal-body">
+            <p>Vous êtes sur le point de rejeter la commande <strong>{{ order.orderId }}</strong>.</p>
+            <div class="form-group">
+              <label for="rejectionReason">Motif du rejet *</label>
+              <textarea
+                id="rejectionReason"
+                [(ngModel)]="rejectionReason"
+                placeholder="Indiquez le motif du rejet..."
+                rows="4"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button (click)="closeRejectionModal()" class="cancel-button">Annuler</button>
+            <button (click)="rejectOrder()" class="confirm-button" [disabled]="!rejectionReason.trim()">
+              Confirmer le rejet
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="loading">
+    <p>Chargement...</p>
+  </div>
+}
+

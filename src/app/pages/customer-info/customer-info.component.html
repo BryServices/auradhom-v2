@@ -108,6 +108,26 @@
             }
         </div>
 
+        <div class="form-group">
+            <label class="form-label" for="phone">Téléphone</label>
+            <input 
+                id="phone"
+                type="tel"
+                class="form-control"
+                formControlName="phone"
+                placeholder="+242 XX XX XX XX"
+                [class.is-invalid]="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
+            @if (customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched) {
+                <div class="error-message">
+                    @if (customerForm.get('phone')?.errors?.['required']) {
+                        Le téléphone est requis
+                    } @else if (customerForm.get('phone')?.errors?.['pattern']) {
+                        Format de téléphone invalide
+                    }
+                </div>
+            }
+        </div>
+
         <button 
             type="submit" 
             class="submit-button"
@@ -146,6 +166,10 @@
                 <div class="summary-item full-width">
                     <span class="summary-label">Adresse complète</span>
                     <span class="summary-value">{{ getFormattedValue('address') }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Téléphone</span>
+                    <span class="summary-value">{{ getFormattedValue('phone') }}</span>
                 </div>
             </div>
             

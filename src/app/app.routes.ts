@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
 export const APP_ROUTES: Routes = [
   {
@@ -36,6 +37,25 @@ export const APP_ROUTES: Routes = [
   {
     path: 'customer-info',
     loadComponent: () => import('./pages/customer-info/customer-info.component').then(c => c.CustomerInfoComponent)
+  },
+  {
+    path: 'admin',
+    children: [
+      {
+        path: 'login',
+        loadComponent: () => import('./pages/admin/login/admin-login.component').then(c => c.AdminLoginComponent)
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/admin/dashboard/admin-dashboard.component').then(c => c.AdminDashboardComponent),
+        canActivate: [authGuard]
+      },
+      {
+        path: 'dashboard/orders/:id',
+        loadComponent: () => import('./pages/admin/order-detail/order-detail.component').then(c => c.OrderDetailComponent),
+        canActivate: [authGuard]
+      }
+    ]
   },
   {
     path: '**',

@@ -1,4 +1,4 @@
-/* AuraDhom Global Styles - Mobile First */
+/* AuraDhom Global Styles */
 
 :root {
   --black: #000000;
@@ -11,12 +11,6 @@
   --font-body: 'Inter', sans-serif;
   --font-heading: 'Space Mono', monospace;
   --tr-speed: 800ms;
-  
-  /* Breakpoints (mobile-first) */
-  --bp-mobile: 480px;
-  --bp-tablet: 768px;
-  --bp-desktop: 1024px;
-  --bp-large: 1440px;
 }
 
 *,
@@ -27,25 +21,17 @@
   padding: 0;
 }
 
-html {
+html, body {
   height: 100%;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  overflow-x: hidden;
 }
 
 body {
-  height: 100%;
   background-color: var(--background);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  width: 100%;
-  position: relative;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -71,42 +57,39 @@ button {
   cursor: pointer;
 }
 
-/* Container responsive - Mobile First */
 .container {
   width: 100%;
-  max-width: 100%;
+  max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
-  padding: 12px 16px;
-  overflow-x: hidden;
+  padding: 16px;
 }
 
-/* Mobile: 480px and up */
-@media (min-width: 480px) {
+/* Mobile: 640px and up */
+@media (min-width: 640px) {
   .container {
-    padding: 16px 20px;
+    padding: 24px;
   }
 }
 
-/* Tablet: 768px and up */
+/* Tablette: 768px and up */
 @media (min-width: 768px) {
   .container {
-    max-width: 1440px;
-    padding: 24px 32px;
+    padding: 32px 48px;
   }
 }
 
 /* Desktop: 1024px and up */
 @media (min-width: 1024px) {
   .container {
-    padding: 32px 48px;
+    padding: 48px 64px;
   }
 }
 
 /* Large Desktop: 1440px and up */
 @media (min-width: 1440px) {
   .container {
-    padding: 48px 64px;
+    padding: 64px;
   }
 }
 
@@ -122,114 +105,56 @@ button {
 }
 
 .main-content {
-  min-height: calc(100vh - 160px);
+  min-height: calc(100vh - 160px); /* Adjust based on header/footer height */
   display: flex;
   flex-direction: column;
-  width: 100%;
-  overflow-x: hidden;
-  position: relative;
 }
 
-/* Responsive typography - Mobile First */
+/* Responsive typography */
 h1 {
-  font-size: 1.5rem;
-  line-height: 1.2;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  font-size: 1.75rem;
 }
 
 h2 {
-  font-size: 1.25rem;
-  line-height: 1.3;
-  word-wrap: break-word;
+  font-size: 1.5rem;
 }
 
 h3 {
-  font-size: 1.125rem;
-  line-height: 1.4;
+  font-size: 1.25rem;
 }
 
-p {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
-}
-
-/* Mobile: 480px and up */
-@media (min-width: 480px) {
+@media (min-width: 640px) {
   h1 {
-    font-size: 1.75rem;
+    font-size: 2rem;
   }
   
   h2 {
-    font-size: 1.5rem;
-  }
-  
-  h3 {
-    font-size: 1.25rem;
+    font-size: 1.75rem;
   }
 }
 
-/* Tablet: 768px and up */
 @media (min-width: 768px) {
   h1 {
-    font-size: 2.25rem;
-  }
-  
-  h2 {
-    font-size: 1.75rem;
-  }
-  
-  h3 {
-    font-size: 1.5rem;
-  }
-}
-
-/* Desktop: 1024px and up */
-@media (min-width: 1024px) {
-  h1 {
-    font-size: 2.75rem;
+    font-size: 2.5rem;
   }
   
   h2 {
     font-size: 2rem;
   }
+  
+  h3 {
+    font-size: 1.5rem;
+  }
 }
 
-/* Large Desktop: 1440px and up */
-@media (min-width: 1440px) {
+@media (min-width: 1024px) {
   h1 {
     font-size: 3rem;
   }
 }
 
-/* Responsive images and media */
+/* Responsive images */
 img {
   max-width: 100%;
   height: auto;
-  display: block;
-}
-
-video, iframe, embed, object {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Prevent horizontal scroll on main elements */
-main, section, article, header, footer, nav, aside {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* Touch targets for mobile */
-button, a, input, select, textarea {
-  min-height: 44px;
-  min-width: 44px;
-}
-
-@media (min-width: 768px) {
-  button, a, input, select, textarea {
-    min-height: auto;
-    min-width: auto;
-  }
 }
