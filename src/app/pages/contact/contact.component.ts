@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
+import { OFFICIAL_PHONE_DISPLAY, OFFICIAL_PHONE_E164, OFFICIAL_WA_ME_URL } from '../../shared/constants';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ConfigService } from '../../services/config.service';
 
 @Component({
   selector: 'app-contact',
@@ -12,8 +12,6 @@ import { ConfigService } from '../../services/config.service';
 })
 export class ContactComponent {
   private fb = inject(FormBuilder);
-  private configService = inject(ConfigService);
-  
   contactForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     message: ['', Validators.required]
@@ -22,21 +20,9 @@ export class ContactComponent {
   formSubmitted = false;
   formSuccess = false;
 
-  get phoneDisplay(): string {
-    const phone = this.configService.getWhatsAppPhone();
-    if (phone.length === 12) {
-      return `+${phone.slice(0, 3)} ${phone.slice(3, 5)} ${phone.slice(5, 8)} ${phone.slice(8)}`;
-    }
-    return `+${phone}`;
-  }
-  
-  get phoneE164(): string {
-    return `+${this.configService.getWhatsAppPhone()}`;
-  }
-  
-  get waMeUrl(): string {
-    return `https://wa.me/${this.configService.getWhatsAppPhone()}`;
-  }
+  phoneDisplay = OFFICIAL_PHONE_DISPLAY;
+  phoneE164 = OFFICIAL_PHONE_E164;
+  waMeUrl = OFFICIAL_WA_ME_URL;
 
   onSubmit() {
     this.formSubmitted = true;

@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { ConfigService } from './config.service';
+import { BehaviorSubject, Observable, map } from 'rxjs';
+import { ApiService } from './api.service';
 
 export interface AdminUser {
   id: string;
@@ -9,45 +9,60 @@ export interface AdminUser {
   name: string;
 }
 
-const STORAGE_KEY = 'auradhom_admin_auth';
-
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private configService = inject(ConfigService);
-  private currentUser = signal<AdminUser | null>(this.getStoredUser());
+  private apiService = inject(ApiService);
+  private currentUser = signal<AdminUser | null>(null);
   private isAuthenticated = computed(() => this.currentUser() !== null);
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    // Charger l'utilisateur depuis l'API au démarrage
+    this.loadCurrentUser();
+  }
 
-  login(email: string, password: string): Observable<boolean> {
-    return new Observable(observer => {
-      // Vérifier les identifiants depuis la configuration
-      setTimeout(() => {
-        const config = this.configService.getConfig();
-        if (email === config.admin.email && password === config.admin.password) {
-          const user: AdminUser = {
-            id: '1',
-            email: email,
-            name: 'Administrateur'
-          };
-          this.currentUser.set(user);
-          this.storeUser(user);
-          observer.next(true);
-          observer.complete();
-        } else {
-          observer.next(false);
-          observer.complete();
+  /**
+   * Charger l'utilisateur actuel depuis l'API
+   */
+  private loadCurrentUser(): void {
+    this.apiService.getCurrentUser().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.currentUser.set(response.data);
         }
-      }, 500);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement de l\'utilisateur', error);
+      }
     });
   }
 
+  login(email: string, password: string): Observable<boolean> {
+    return this.apiService.login(email, password).pipe(
+      map(response => {
+        if (response.success && response.data) {
+          this.currentUser.set(response.data);
+          return true;
+        }
+        return false;
+      })
+    );
+  }
+
   logout(): void {
-    this.currentUser.set(null);
-    localStorage.removeItem(STORAGE_KEY);
-    this.router.navigate(['/admin/login']);
+    this.apiService.logout().subscribe({
+      next: () => {
+        this.currentUser.set(null);
+        this.router.navigate(['/admin/login']);
+      },
+      error: (error) => {
+        console.error('Erreur lors de la déconnexion', error);
+        // Déconnexion locale même en cas d'erreur API
+        this.currentUser.set(null);
+        this.router.navigate(['/admin/login']);
+      }
+    });
   }
 
   getCurrentUser(): AdminUser | null {
@@ -60,23 +75,6 @@ export class AuthService {
 
   getAuthState(): Observable<boolean> {
     return new BehaviorSubject(this.isAuthenticated());
-  }
-
-  private getStoredUser(): AdminUser | null {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  }
-
-  private storeUser(user: AdminUser): void {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    } catch {
-      console.error('Erreur lors de la sauvegarde de l\'utilisateur');
-    }
   }
 }
 

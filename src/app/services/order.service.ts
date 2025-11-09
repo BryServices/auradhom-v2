@@ -1,25 +1,26 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Order, PendingOrder, ValidatedOrder, RejectedOrder, OrderStatus, OrderFilters } from '../models/order';
 import { Customer } from '../models/customer';
 import { CartItem } from './cart.service';
 import { NotificationService } from './notification.service';
-
-const STORAGE_PENDING_KEY = 'auradhom_pending_orders';
-const STORAGE_VALIDATED_KEY = 'auradhom_validated_orders';
-const STORAGE_REJECTED_KEY = 'auradhom_rejected_orders';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  private pendingOrders = signal<PendingOrder[]>(this.loadPendingOrders());
-  private validatedOrders = signal<ValidatedOrder[]>(this.loadValidatedOrders());
-  private rejectedOrders = signal<RejectedOrder[]>(this.loadRejectedOrders());
+  private apiService = inject(ApiService);
+  private pendingOrders = signal<PendingOrder[]>([]);
+  private validatedOrders = signal<ValidatedOrder[]>([]);
+  private rejectedOrders = signal<RejectedOrder[]>([]);
 
   private ordersChanged = new BehaviorSubject<void>(undefined);
 
   constructor(private notificationService: NotificationService) {
+    // Charger les données depuis l'API
+    this.loadOrdersFromApi();
+
     // Écouter les changements pour les notifications avec effect()
     effect(() => {
       const orders: PendingOrder[] = this.pendingOrders();
@@ -29,6 +30,58 @@ export class OrderService {
         if (lastOrder && this.isNewOrder(lastOrder)) {
           this.notificationService.notifyNewOrder(lastOrder);
         }
+      }
+    });
+  }
+
+  /**
+   * Charger toutes les commandes depuis l'API
+   */
+  private loadOrdersFromApi(): void {
+    // Charger les commandes en attente
+    this.apiService.getPendingOrders().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.pendingOrders.set(response.data.map((o: any) => ({
+            ...o,
+            createdAt: new Date(o.createdAt)
+          })));
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des commandes en attente', error);
+      }
+    });
+
+    // Charger les commandes validées
+    this.apiService.getValidatedOrders().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.validatedOrders.set(response.data.map((o: any) => ({
+            ...o,
+            createdAt: new Date(o.createdAt),
+            validatedAt: new Date(o.validatedAt)
+          })));
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des commandes validées', error);
+      }
+    });
+
+    // Charger les commandes rejetées
+    this.apiService.getRejectedOrders().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.rejectedOrders.set(response.data.map((o: any) => ({
+            ...o,
+            createdAt: new Date(o.createdAt),
+            rejectedAt: new Date(o.rejectedAt)
+          })));
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des commandes rejetées', error);
       }
     });
   }
@@ -54,10 +107,19 @@ export class OrderService {
       phone: customer.phone
     };
 
-    const orders = [...this.pendingOrders(), order];
-    this.pendingOrders.set(orders);
-    this.savePendingOrders(orders);
-    this.ordersChanged.next();
+    // Sauvegarder via l'API
+    this.apiService.createPendingOrder(order).subscribe({
+      next: (response) => {
+        if (response.success) {
+          const orders = [...this.pendingOrders(), order];
+          this.pendingOrders.set(orders);
+          this.ordersChanged.next();
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors de la création de la commande', error);
+      }
+    });
 
     return order;
   }
@@ -74,16 +136,25 @@ export class OrderService {
       validatedBy: validatedBy
     };
 
-    // Retirer de pending et ajouter à validated
-    const pending = this.pendingOrders().filter(o => o.id !== orderId);
-    this.pendingOrders.set(pending);
-    this.savePendingOrders(pending);
+    // Sauvegarder via l'API
+    this.apiService.validateOrder(orderId, validatedOrder).subscribe({
+      next: (response) => {
+        if (response.success) {
+          // Retirer de pending et ajouter à validated
+          const pending = this.pendingOrders().filter(o => o.id !== orderId);
+          this.pendingOrders.set(pending);
 
-    const validated = [...this.validatedOrders(), validatedOrder];
-    this.validatedOrders.set(validated);
-    this.saveValidatedOrders(validated);
+          const validated = [...this.validatedOrders(), validatedOrder];
+          this.validatedOrders.set(validated);
 
-    this.ordersChanged.next();
+          this.ordersChanged.next();
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors de la validation de la commande', error);
+      }
+    });
+
     return validatedOrder;
   }
 
@@ -100,16 +171,25 @@ export class OrderService {
       rejectionReason: rejectionReason
     };
 
-    // Retirer de pending et ajouter à rejected
-    const pending = this.pendingOrders().filter(o => o.id !== orderId);
-    this.pendingOrders.set(pending);
-    this.savePendingOrders(pending);
+    // Sauvegarder via l'API
+    this.apiService.rejectOrder(orderId, rejectedOrder).subscribe({
+      next: (response) => {
+        if (response.success) {
+          // Retirer de pending et ajouter à rejected
+          const pending = this.pendingOrders().filter(o => o.id !== orderId);
+          this.pendingOrders.set(pending);
 
-    const rejected = [...this.rejectedOrders(), rejectedOrder];
-    this.rejectedOrders.set(rejected);
-    this.saveRejectedOrders(rejected);
+          const rejected = [...this.rejectedOrders(), rejectedOrder];
+          this.rejectedOrders.set(rejected);
 
-    this.ordersChanged.next();
+          this.ordersChanged.next();
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors du rejet de la commande', error);
+      }
+    });
+
     return rejectedOrder;
   }
 
@@ -210,75 +290,6 @@ export class OrderService {
     return `ADH-${timestamp}-${random}`;
   }
 
-  // Chargement depuis localStorage
-  private loadPendingOrders(): PendingOrder[] {
-    try {
-      const stored = localStorage.getItem(STORAGE_PENDING_KEY);
-      if (!stored) return [];
-      const orders = JSON.parse(stored);
-      return orders.map((o: any) => ({
-        ...o,
-        createdAt: new Date(o.createdAt)
-      }));
-    } catch {
-      return [];
-    }
-  }
-
-  private loadValidatedOrders(): ValidatedOrder[] {
-    try {
-      const stored = localStorage.getItem(STORAGE_VALIDATED_KEY);
-      if (!stored) return [];
-      const orders = JSON.parse(stored);
-      return orders.map((o: any) => ({
-        ...o,
-        createdAt: new Date(o.createdAt),
-        validatedAt: new Date(o.validatedAt)
-      }));
-    } catch {
-      return [];
-    }
-  }
-
-  private loadRejectedOrders(): RejectedOrder[] {
-    try {
-      const stored = localStorage.getItem(STORAGE_REJECTED_KEY);
-      if (!stored) return [];
-      const orders = JSON.parse(stored);
-      return orders.map((o: any) => ({
-        ...o,
-        createdAt: new Date(o.createdAt),
-        rejectedAt: new Date(o.rejectedAt)
-      }));
-    } catch {
-      return [];
-    }
-  }
-
-  // Sauvegarde dans localStorage
-  private savePendingOrders(orders: PendingOrder[]): void {
-    try {
-      localStorage.setItem(STORAGE_PENDING_KEY, JSON.stringify(orders));
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde des commandes en attente', error);
-    }
-  }
-
-  private saveValidatedOrders(orders: ValidatedOrder[]): void {
-    try {
-      localStorage.setItem(STORAGE_VALIDATED_KEY, JSON.stringify(orders));
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde des commandes validées', error);
-    }
-  }
-
-  private saveRejectedOrders(orders: RejectedOrder[]): void {
-    try {
-      localStorage.setItem(STORAGE_REJECTED_KEY, JSON.stringify(orders));
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde des commandes rejetées', error);
-    }
-  }
 
   // Vérifier si une commande est nouvelle (pour les notifications)
   private lastOrderId: string | null = null;

@@ -1,14 +1,12 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Customer, DEPARTMENTS, Department, City } from '../models/customer';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ConfigService } from './config.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CustomerService {
     private customerInfo = new BehaviorSubject<Customer | null>(null);
-    private configService = inject(ConfigService);
     
     constructor() {
         // Initialiser avec les données stockées si elles existent
@@ -116,7 +114,7 @@ Félicitations d'avoir décidé de porter bien plus qu'un vêtement, mais une au
     }
 
     getWhatsAppLink(message: string): string {
-        const phoneNumber = this.configService.getWhatsAppPhone(); // Format international sans +
+        const phoneNumber = '242066060029'; // Format international sans +
         return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     }
 

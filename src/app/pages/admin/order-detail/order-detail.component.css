@@ -445,30 +445,196 @@
   cursor: not-allowed;
 }
 
+/* Mobile Styles */
 @media (max-width: 768px) {
+  .order-detail-container {
+    padding: 16px;
+  }
+
   .detail-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .back-button {
+    padding: 8px 16px;
+    font-size: 0.8125rem;
+  }
+
+  .header-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .header-info h1 {
+    font-size: 1.5rem;
+    word-break: break-word;
+  }
+
+  .status-badge {
+    padding: 5px 12px;
+    font-size: 0.8125rem;
+  }
+
+  .detail-content {
+    gap: 20px;
+  }
+
+  .detail-section {
+    padding: 20px;
+  }
+
+  .detail-section h2 {
+    font-size: 1.125rem;
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+  }
+
+  .info-card p {
+    font-size: 0.8125rem;
+  }
+
+  .items-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .items-table {
     font-size: 0.75rem;
+    min-width: 500px;
   }
 
   .items-table th,
   .items-table td {
-    padding: 8px;
+    padding: 10px 8px;
   }
 
-  .detail-actions {
-    flex-direction: column;
+  .item-image {
+    width: 40px;
+    height: 40px;
   }
 
-  .action-button {
-    width: 100%;
+  .item-info {
+    gap: 8px;
+  }
+
+  .summary-row {
+    font-size: 0.8125rem;
+    padding: 10px 0;
+  }
+
+  .summary-row.total {
+    font-size: 1rem;
+    padding-top: 16px;
+  }
+
+  .whatsapp-card {
+    padding: 16px;
+  }
+
+  .whatsapp-message {
+    padding: 12px;
+    font-size: 0.75rem;
+    max-height: 200px;
   }
 
   .whatsapp-actions {
     flex-direction: column;
+    gap: 8px;
+  }
+
+  .whatsapp-actions button {
+    width: 100%;
+  }
+
+  .detail-actions {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    margin-top: 24px;
+  }
+
+  .action-button {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.8125rem;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-width: none;
+  }
+
+  .modal-header {
+    padding: 16px;
+  }
+
+  .modal-header h3 {
+    font-size: 1.125rem;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  .modal-footer {
+    padding: 16px;
+    flex-direction: column;
+  }
+
+  .modal-footer button {
+    width: 100%;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 480px) {
+  .order-detail-container {
+    padding: 12px;
+  }
+
+  .detail-header {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .header-info h1 {
+    font-size: 1.25rem;
+  }
+
+  .detail-section {
+    padding: 16px;
+  }
+
+  .detail-section h2 {
+    font-size: 1rem;
+  }
+
+  .items-table {
+    font-size: 0.7rem;
+    min-width: 450px;
+  }
+
+  .items-table th,
+  .items-table td {
+    padding: 8px 6px;
+  }
+
+  .item-image {
+    width: 35px;
+    height: 35px;
+  }
+
+  .detail-actions {
+    padding: 12px;
+  }
+
+  .action-button {
+    padding: 10px 16px;
+    font-size: 0.75rem;
   }
 }

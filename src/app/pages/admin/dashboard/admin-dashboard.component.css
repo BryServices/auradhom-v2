@@ -284,23 +284,125 @@
   }
 }
 
+/* Mobile Styles */
 @media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    align-items: flex-start;
+  .dashboard-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--background);
   }
 
-  .header-right {
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .header-left {
     width: 100%;
-    justify-content: space-between;
+  }
+
+  .header-left h1 {
+    font-size: 1.125rem;
+    margin: 0 0 12px 0;
   }
 
   .dashboard-nav {
     width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 
   .nav-button {
     flex: 1;
     justify-content: center;
+    padding: 10px 12px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-right {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .notifications-container {
+    flex-shrink: 0;
+  }
+
+  .notification-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .notifications-dropdown {
+    width: calc(100vw - 32px);
+    max-width: 320px;
+    right: -16px;
+    left: auto;
+  }
+
+  .user-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .user-info span {
+    font-size: 0.8125rem;
+  }
+
+  .logout-button {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .dashboard-main {
+    padding: 16px;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 480px) {
+  .header-content {
+    padding: 12px;
+  }
+
+  .dashboard-nav {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .nav-button {
+    padding: 8px 10px;
+    font-size: 0.7rem;
+  }
+
+  .header-right {
+    flex-wrap: wrap;
+  }
+
+  .user-info {
+    width: 100%;
+    order: 3;
+  }
+
+  .notifications-container {
+    order: 1;
+  }
+
+  .dashboard-main {
+    padding: 12px;
   }
 }

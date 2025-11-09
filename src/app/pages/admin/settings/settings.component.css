@@ -174,17 +174,110 @@
   background-color: rgba(220, 53, 69, 0.1);
 }
 
+/* Mobile Styles */
 @media (max-width: 768px) {
+  .settings-container {
+    padding: 0;
+  }
+
+  .settings-header {
+    margin-bottom: 24px;
+  }
+
+  .settings-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .settings-header p {
+    font-size: 0.8125rem;
+  }
+
+  .alert {
+    padding: 10px 14px;
+    font-size: 0.8125rem;
+    margin-bottom: 16px;
+  }
+
+  .settings-content {
+    gap: 24px;
+  }
+
   .settings-section {
     padding: 20px;
   }
 
+  .settings-section h2 {
+    font-size: 1.125rem;
+    margin: 0 0 8px 0;
+  }
+
+  .section-description {
+    font-size: 0.8125rem;
+    margin: 0 0 20px 0;
+  }
+
+  .settings-form {
+    gap: 16px;
+  }
+
+  .form-group {
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 0.8125rem;
+  }
+
+  .form-group input {
+    padding: 10px 14px;
+    font-size: 0.8125rem;
+  }
+
+  .error-message {
+    font-size: 0.7rem;
+  }
+
+  .form-hint {
+    font-size: 0.7rem;
+  }
+
   .save-button {
     width: 100%;
+    padding: 10px 20px;
+    font-size: 0.8125rem;
+    min-width: auto;
   }
 
   .reset-button {
     width: 100%;
+    padding: 10px 20px;
+    font-size: 0.8125rem;
+  }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 480px) {
+  .settings-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .settings-section {
+    padding: 16px;
+  }
+
+  .settings-section h2 {
+    font-size: 1rem;
+  }
+
+  .form-group input {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  .save-button,
+  .reset-button {
+    padding: 8px 16px;
+    font-size: 0.75rem;
   }
 }
 

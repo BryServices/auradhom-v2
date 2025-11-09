@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
+import { OFFICIAL_PHONE_DISPLAY, OFFICIAL_PHONE_E164, OFFICIAL_WA_ME_URL } from '../../shared/constants';
 import { RouterLink } from '@angular/router';
-import { ConfigService } from '../../services/config.service';
 
 @Component({
   selector: 'app-confirmation',
@@ -10,22 +10,7 @@ import { ConfigService } from '../../services/config.service';
   styleUrls: ['./confirmation.component.css']
 })
 export class ConfirmationComponent {
-  private configService = inject(ConfigService);
-  
-  get phoneDisplay(): string {
-    const phone = this.configService.getWhatsAppPhone();
-    // Formater le numéro : +242 05 072 8339
-    if (phone.length === 12) {
-      return `+${phone.slice(0, 3)} ${phone.slice(3, 5)} ${phone.slice(5, 8)} ${phone.slice(8)}`;
-    }
-    return `+${phone}`;
-  }
-  
-  get phoneE164(): string {
-    return `+${this.configService.getWhatsAppPhone()}`;
-  }
-  
-  get waMeUrl(): string {
-    return `https://wa.me/${this.configService.getWhatsAppPhone()}`;
-  }
+  phoneDisplay = OFFICIAL_PHONE_DISPLAY;
+  phoneE164 = OFFICIAL_PHONE_E164;
+  waMeUrl = OFFICIAL_WA_ME_URL;
 }
