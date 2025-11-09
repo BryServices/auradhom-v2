@@ -11,20 +11,23 @@
 
 .back-button {
   padding: 10px 20px;
-  background: #f5f5f5;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: #666;
-  transition: all 0.3s;
+  background: transparent;
+  border: 1px solid var(--gray-dark);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
   text-decoration: none;
   display: inline-block;
 }
 
 .back-button:hover {
-  background: #e0e0e0;
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .header-info {
@@ -34,9 +37,10 @@
 }
 
 .header-info h1 {
-  font-size: 28px;
-  font-weight: bold;
-  color: #333;
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -44,23 +48,26 @@
   display: inline-block;
   padding: 6px 16px;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
 .status-badge.status-pending {
-  background: #fff3cd;
-  color: #856404;
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
 }
 
 .status-badge.status-validated {
-  background: #d4edda;
-  color: #155724;
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
 }
 
 .status-badge.status-rejected {
-  background: #f8d7da;
-  color: #721c24;
+  background: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.3);
 }
 
 .detail-content {
@@ -70,19 +77,19 @@
 }
 
 .detail-section {
-  background: white;
-  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--gray-dark);
   padding: 25px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .detail-section h2 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
   margin: 0 0 20px 0;
   padding-bottom: 15px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 1px solid var(--gray-dark);
 }
 
 .info-card {
@@ -93,14 +100,15 @@
 
 .info-card p {
   margin: 0;
-  font-size: 14px;
-  color: #666;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
   line-height: 1.6;
+  font-weight: 300;
 }
 
 .info-card strong {
-  color: #333;
-  font-weight: 600;
+  color: var(--text-primary);
+  font-weight: 700;
 }
 
 .items-card {
@@ -113,27 +121,31 @@
 }
 
 .items-table thead {
-  background: #f9f9f9;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .items-table th {
   padding: 12px;
   text-align: left;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  border-bottom: 2px solid #e0e0e0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--gray-dark);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .items-table td {
   padding: 15px 12px;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 14px;
-  color: #666;
+  border-bottom: 1px solid var(--gray-dark);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 300;
 }
 
 .items-table tbody tr:hover {
-  background: #f9f9f9;
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .item-info {
@@ -147,6 +159,7 @@
   height: 50px;
   object-fit: cover;
   border-radius: 6px;
+  border: 1px solid var(--gray-dark);
 }
 
 .summary-card {
@@ -160,37 +173,40 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  font-size: 14px;
-  color: #666;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 300;
 }
 
 .summary-row.total {
-  border-top: 2px solid #e0e0e0;
+  border-top: 1px solid var(--gray-dark);
   padding-top: 20px;
   margin-top: 5px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .whatsapp-card {
-  background: #f9f9f9;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--gray-dark);
   padding: 20px;
 }
 
 .whatsapp-message {
-  background: white;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--gray-dark);
   padding: 15px;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #333;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
   white-space: pre-wrap;
   word-wrap: break-word;
   margin: 0 0 15px 0;
   max-height: 300px;
   overflow-y: auto;
-  font-family: inherit;
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.6;
 }
 
 .whatsapp-actions {
@@ -202,81 +218,94 @@
   display: flex;
   gap: 15px;
   padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border: 1px solid var(--gray-dark);
   margin-top: 30px;
 }
 
 .action-button {
   padding: 12px 24px;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid var(--gray-dark);
+  background: transparent;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
 }
 
 .validate-button {
-  background: #28a745;
-  color: white;
+  border-color: #28a745;
+  color: #28a745;
 }
 
 .validate-button:hover {
-  background: #218838;
+  border-color: #28a745;
+  color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
 }
 
 .reject-button {
-  background: #dc3545;
-  color: white;
+  border-color: #dc3545;
+  color: #dc3545;
 }
 
 .reject-button:hover {
-  background: #c82333;
+  border-color: #dc3545;
+  color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
 }
 
 .download-button {
-  background: #17a2b8;
-  color: white;
+  border-color: var(--text-secondary);
+  color: var(--text-secondary);
 }
 
 .download-button:hover {
-  background: #138496;
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .copy-button {
-  background: #667eea;
-  color: white;
+  border-color: var(--text-secondary);
+  color: var(--text-secondary);
 }
 
 .copy-button:hover {
-  background: #5568d3;
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .whatsapp-button {
-  background: #25d366;
-  color: white;
+  border-color: #25d366;
+  color: #25d366;
 }
 
 .whatsapp-button:hover {
-  background: #20ba5a;
+  border-color: #25d366;
+  color: #25d366;
+  background-color: rgba(37, 211, 102, 0.1);
 }
 
 .loading {
   text-align: center;
   padding: 60px 20px;
-  color: #999;
+  color: var(--text-secondary);
+  font-weight: 300;
 }
 
-/* Modal (identique à orders-list) */
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -284,8 +313,8 @@
 }
 
 .modal-content {
-  background: white;
-  border-radius: 8px;
+  background: var(--background);
+  border: 1px solid var(--gray-dark);
   width: 90%;
   max-width: 500px;
   max-height: 90vh;
@@ -294,16 +323,18 @@
 
 .modal-header {
   padding: 20px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--gray-dark);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .modal-header h3 {
+  font-family: var(--font-heading);
   margin: 0;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .modal-header .close-button {
@@ -311,7 +342,7 @@
   border: none;
   font-size: 28px;
   cursor: pointer;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1;
   padding: 0;
   width: 30px;
@@ -319,6 +350,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.modal-header .close-button:hover {
+  color: var(--text-primary);
 }
 
 .modal-body {
@@ -327,39 +363,44 @@
 
 .modal-body p {
   margin: 0 0 20px 0;
-  color: #666;
+  color: var(--text-secondary);
+  font-weight: 300;
 }
 
-.form-group {
+.modal-body .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
+.modal-body .form-group label {
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.form-group textarea {
-  padding: 10px;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: inherit;
+.modal-body .form-group textarea {
+  padding: 12px 16px;
+  border: 1px solid var(--gray-dark);
+  background-color: transparent;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: var(--font-body);
   resize: vertical;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
-.form-group textarea:focus {
+.modal-body .form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--text-secondary);
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .modal-footer {
   padding: 20px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--gray-dark);
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -367,34 +408,40 @@
 
 .modal-footer button {
   padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid var(--gray-dark);
+  background: transparent;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
 }
 
 .cancel-button {
-  background: #f5f5f5;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .cancel-button:hover {
-  background: #e0e0e0;
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 .confirm-button {
-  background: #dc3545;
-  color: white;
+  border-color: #dc3545;
+  color: #dc3545;
 }
 
 .confirm-button:hover:not(:disabled) {
-  background: #c82333;
+  border-color: #dc3545;
+  color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
 }
 
 .confirm-button:disabled {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -405,7 +452,7 @@
   }
 
   .items-table {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 
   .items-table th,
@@ -425,4 +472,3 @@
     flex-direction: column;
   }
 }
-
