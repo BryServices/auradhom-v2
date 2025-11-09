@@ -73,9 +73,13 @@ export class OrderDetailComponent implements OnInit {
     }
   }
 
-  downloadReceipt(): void {
+  async downloadReceipt(): Promise<void> {
     if (this.order && this.order.status === 'validated') {
-      this.pdfService.generateOrderReceipt(this.order as ValidatedOrder);
+      try {
+        await this.pdfService.generateOrderReceipt(this.order as ValidatedOrder);
+      } catch (error) {
+        console.error('Erreur lors du téléchargement du PDF:', error);
+      }
     }
   }
 

@@ -177,8 +177,12 @@ export class OrdersListComponent implements OnInit {
     }
   }
 
-  downloadReceipt(order: ValidatedOrder): void {
-    this.pdfService.generateOrderReceipt(order);
+  async downloadReceipt(order: ValidatedOrder): Promise<void> {
+    try {
+      await this.pdfService.generateOrderReceipt(order);
+    } catch (error) {
+      console.error('Erreur lors du téléchargement du PDF:', error);
+    }
   }
 
   formatDate(date: Date): string {
