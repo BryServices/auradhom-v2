@@ -120,9 +120,9 @@
             }
           </div>
 
-          @if (order.status === 'rejected' && 'rejectionReason' in order) {
+          @if (order.status === 'rejected' && hasRejectionReason(order)) {
             <div class="rejection-reason">
-              <strong>Motif du rejet:</strong> {{ order.rejectionReason }}
+              <strong>Motif du rejet:</strong> {{ getRejectionReason(order) }}
             </div>
           }
         </div>

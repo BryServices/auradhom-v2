@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, effect } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Order, PendingOrder, ValidatedOrder, RejectedOrder, OrderStatus, OrderFilters } from '../models/order';
 import { Customer } from '../models/customer';
@@ -20,8 +20,9 @@ export class OrderService {
   private ordersChanged = new BehaviorSubject<void>(undefined);
 
   constructor(private notificationService: NotificationService) {
-    // Écouter les changements pour les notifications
-    this.pendingOrders.subscribe(orders => {
+    // Écouter les changements pour les notifications avec effect()
+    effect(() => {
+      const orders: PendingOrder[] = this.pendingOrders();
       if (orders.length > 0) {
         // Vérifier s'il y a une nouvelle commande
         const lastOrder = orders[orders.length - 1];

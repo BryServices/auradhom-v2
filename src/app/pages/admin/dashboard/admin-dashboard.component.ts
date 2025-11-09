@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { OrderService } from '../../../services/order.service';
 import { NotificationService } from '../../../services/notification.service';
@@ -9,7 +9,7 @@ import { OrdersListComponent } from '../orders-list/orders-list.component';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, OrdersListComponent],
+  imports: [CommonModule, OrdersListComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })

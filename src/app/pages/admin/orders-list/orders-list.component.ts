@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, input, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { OrderService } from '../../../services/order.service';
 import { AuthService } from '../../../services/auth.service';
 import { PdfService } from '../../../services/pdf.service';
@@ -10,7 +10,7 @@ import { FormatFcfaPipe } from '../../../pipes/format-fcfa.pipe';
 @Component({
   selector: 'app-orders-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormatFcfaPipe],
+  imports: [CommonModule, FormatFcfaPipe],
   templateUrl: './orders-list.component.html',
   styleUrls: ['./orders-list.component.css']
 })
@@ -197,6 +197,17 @@ export class OrdersListComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  hasRejectionReason(order: PendingOrder | ValidatedOrder | RejectedOrder): boolean {
+    return order.status === OrderStatus.REJECTED && 'rejectionReason' in order;
+  }
+
+  getRejectionReason(order: PendingOrder | ValidatedOrder | RejectedOrder): string {
+    if (order.status === OrderStatus.REJECTED && 'rejectionReason' in order) {
+      return (order as RejectedOrder).rejectionReason;
+    }
+    return '';
   }
 }
 

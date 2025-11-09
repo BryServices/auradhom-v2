@@ -58,7 +58,7 @@ export class CollectionComponent {
       const map: Record<number, string> = {};
       data.forEach(prod => {
         // Par défaut, utilise la première couleur si disponible, sinon l'image du produit
-        const firstColor = prod.colors?.[0]?.name;
+        const firstColor = prod.colors[0]?.name;
         if (firstColor) {
           // Image par défaut (structure actuelle)
           const defaultImg = this.resolveColorImage(firstColor);
@@ -204,7 +204,7 @@ export class CollectionComponent {
   }
   
   getColorImages(product: Product): string[] {
-    const firstColor = product.colors?.[0]?.name;
+    const firstColor = product.colors[0]?.name;
     if (!firstColor) return [];
     return this.preloadService.getColorImages(firstColor);
   }
