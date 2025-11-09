@@ -54,26 +54,35 @@ export class CustomerInfoComponent implements OnInit {
         });
 
         // Réagir aux changements de département
-        this.customerForm.get('department')?.valueChanges.subscribe(() => {
-            this.onDepartmentChange();
-        });
+        const departmentControl = this.customerForm.get('department');
+        if (departmentControl) {
+            departmentControl.valueChanges.subscribe(() => {
+                this.onDepartmentChange();
+            });
+        }
 
         // Réagir aux changements de ville
-        this.customerForm.get('city')?.valueChanges.subscribe(() => {
-            this.onCityChange();
-        });
+        const cityControl = this.customerForm.get('city');
+        if (cityControl) {
+            cityControl.valueChanges.subscribe(() => {
+                this.onCityChange();
+            });
+        }
     }
 
     onDepartmentChange(): void {
-        const departmentId = this.customerForm.get('department')?.value;
+        const departmentControl = this.customerForm.get('department');
+        const departmentId = departmentControl ? departmentControl.value : '';
         this.cities = this.customerService.getCitiesByDepartment(departmentId);
         this.customerForm.patchValue({ city: '', district: '' });
         this.districts = [];
     }
 
     onCityChange(): void {
-        const departmentId = this.customerForm.get('department')?.value;
-        const cityId = this.customerForm.get('city')?.value;
+        const departmentControl = this.customerForm.get('department');
+        const cityControl = this.customerForm.get('city');
+        const departmentId = departmentControl ? departmentControl.value : '';
+        const cityId = cityControl ? cityControl.value : '';
         this.districts = this.customerService.getDistrictsByCity(departmentId, cityId);
         this.customerForm.patchValue({ district: '' });
     }
@@ -81,12 +90,16 @@ export class CustomerInfoComponent implements OnInit {
     toggleCustomDistrict(): void {
         this.customDistrict = !this.customDistrict;
         if (this.customDistrict) {
-            this.customerForm.get('district')?.setValue('');
+            const districtControl = this.customerForm.get('district');
+            if (districtControl) {
+                districtControl.setValue('');
+            }
         }
     }
 
     getFormattedValue(controlName: string): string {
-        const value = this.customerForm.get(controlName)?.value;
+        const control = this.customerForm.get(controlName);
+        const value = control ? control.value : null;
         if (!value) return '-';
         
         if (controlName === 'department') {
@@ -109,7 +122,10 @@ export class CustomerInfoComponent implements OnInit {
         } else {
             // Marquer tous les champs comme touchés pour afficher les erreurs
             Object.keys(this.customerForm.controls).forEach(key => {
-                this.customerForm.get(key)?.markAsTouched();
+                const control = this.customerForm.get(key);
+                if (control) {
+                    control.markAsTouched();
+                }
             });
         }
     }

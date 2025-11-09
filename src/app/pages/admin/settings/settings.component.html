@@ -81,7 +81,7 @@
           <small class="form-hint">Requis seulement si vous changez le mot de passe</small>
         </div>
 
-        <button type="submit" class="save-button" [disabled]="adminForm.get('email')?.invalid || (adminForm.get('email')?.pristine && !adminForm.get('password')?.value)">
+        <button type="submit" class="save-button" [disabled]="isAdminFormDisabled()">
           Mettre à jour les identifiants
         </button>
       </form>

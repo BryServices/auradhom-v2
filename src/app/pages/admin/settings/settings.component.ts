@@ -58,6 +58,16 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  isAdminFormDisabled(): boolean {
+    const emailControl = this.adminForm.get('email');
+    const passwordControl = this.adminForm.get('password');
+    if (!emailControl) return true;
+    const emailInvalid = emailControl.invalid;
+    const emailPristine = emailControl.pristine;
+    const hasPassword = passwordControl && passwordControl.value;
+    return emailInvalid || (emailPristine && !hasPassword);
+  }
+
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
@@ -96,7 +106,8 @@ export class SettingsComponent implements OnInit {
   }
 
   updateAdminCredentials(): void {
-    if (this.adminForm.get('email')?.invalid) {
+    const emailControl = this.adminForm.get('email');
+    if (emailControl && emailControl.invalid) {
       this.markFormGroupTouched(this.adminForm);
       return;
     }
@@ -202,7 +213,10 @@ export class SettingsComponent implements OnInit {
 
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.keys(formGroup.controls).forEach(key => {
-      formGroup.get(key)?.markAsTouched();
+      const control = formGroup.get(key);
+      if (control) {
+        control.markAsTouched();
+      }
     });
   }
 }

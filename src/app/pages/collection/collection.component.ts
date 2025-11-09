@@ -37,15 +37,20 @@ export class CollectionComponent {
     const allProducts = this.products();
     const filters = this.filterForm.value;
 
-    if (!filters.silhouette?.length && !filters.type?.length && !filters.matiere?.length && !filters.teinte?.length) {
+    const hasSilhouette = filters.silhouette && filters.silhouette.length > 0;
+    const hasType = filters.type && filters.type.length > 0;
+    const hasMatiere = filters.matiere && filters.matiere.length > 0;
+    const hasTeinte = filters.teinte && filters.teinte.length > 0;
+
+    if (!hasSilhouette && !hasType && !hasMatiere && !hasTeinte) {
       return allProducts;
     }
 
     return allProducts.filter(p => {
-      const sizeMatch = !filters.silhouette?.length || p.sizes.some(s => filters.silhouette?.includes(s));
-      const typeMatch = !filters.type?.length || filters.type.includes(p.type);
-      const materialMatch = !filters.matiere?.length || filters.matiere.includes(p.material);
-      const colorMatch = !filters.teinte?.length || p.colors.some(c => filters.teinte?.includes(c.name));
+      const sizeMatch = !hasSilhouette || (filters.silhouette && p.sizes.some(s => filters.silhouette.includes(s)));
+      const typeMatch = !hasType || (filters.type && filters.type.includes(p.type));
+      const materialMatch = !hasMatiere || (filters.matiere && filters.matiere.includes(p.material));
+      const colorMatch = !hasTeinte || (filters.teinte && p.colors.some(c => filters.teinte.includes(c.name)));
       return sizeMatch && typeMatch && materialMatch && colorMatch;
     });
   });

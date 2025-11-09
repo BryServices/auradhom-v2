@@ -43,11 +43,14 @@ export class ProductDetailComponent implements OnChanges, OnInit {
     if (changes['slug'] && this.slug) {
       this.productService.getProductBySlug(this.slug).subscribe((p: Product | undefined) => {
         this.product.set(p);
-        if (p?.sizes.length === 1) this.selectedSize.set(p.sizes[0]);
-        if (p?.colors.length === 1) this.selectedColor.set(p.colors[0]);
+        if (!p) return;
+        
+        if (p.sizes && p.sizes.length === 1) this.selectedSize.set(p.sizes[0]);
+        if (p.colors && p.colors.length === 1) this.selectedColor.set(p.colors[0]);
         // Alimente les vignettes à partir des visuels de la couleur principale (trouvée en premier)
-        if (p?.colors?.length) {
-          const mainColor = p.colors[0]?.name ?? '';
+        if (p.colors && p.colors.length > 0) {
+          const firstColor = p.colors[0];
+          const mainColor = firstColor && firstColor.name ? firstColor.name : '';
           const isBeige = this.normalizeColorName(mainColor) === 'beige' && p.name.toLowerCase().includes('beige');
           
           this.preload.findColorThumbnails(mainColor).then((imgs: string[]) => {
@@ -77,7 +80,7 @@ export class ProductDetailComponent implements OnChanges, OnInit {
             }
             this.currentImage = this.productImages[0] || p.image;
           });
-        } else if (p?.image) {
+        } else if (p.image) {
           this.productImages = [];
           this.currentImage = p.image;
         }

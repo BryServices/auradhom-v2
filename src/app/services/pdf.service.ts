@@ -56,7 +56,7 @@ export class PdfService {
     if (color) {
       doc.setDrawColor(color[0], color[1], color[2]);
     } else {
-      doc.setDrawColor(...this.COLORS.black);
+      doc.setDrawColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
     }
     doc.setLineWidth(width);
     doc.line(x1, y, x2, y);
@@ -84,7 +84,7 @@ export class PdfService {
       this.drawRect(doc, 0, 0, pageWidth, 50, this.COLORS.black);
       
       // Logo AURADHOM en blanc
-      doc.setTextColor(...this.COLORS.white);
+      doc.setTextColor(this.COLORS.white[0], this.COLORS.white[1], this.COLORS.white[2]);
       doc.setFontSize(28);
       doc.setFont('helvetica', 'bold');
       doc.text('AURADHOM', margin, 32);
@@ -95,7 +95,7 @@ export class PdfService {
       doc.text('Reçu de Commande', margin + 70, 32);
       
       // Réinitialiser la couleur du texte
-      doc.setTextColor(...this.COLORS.black);
+      doc.setTextColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
       yPosition = 60;
 
       // ============================================
@@ -169,7 +169,7 @@ export class PdfService {
       const tableHeaderY = yPosition;
       this.drawRect(doc, margin, tableHeaderY, contentWidth, 12, this.COLORS.grayDark);
       
-      doc.setTextColor(...this.COLORS.white);
+      doc.setTextColor(this.COLORS.white[0], this.COLORS.white[1], this.COLORS.white[2]);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
       doc.text('Article', margin + 3, tableHeaderY + 8);
@@ -179,7 +179,7 @@ export class PdfService {
       doc.text('Prix unit.', margin + 130, tableHeaderY + 8);
       doc.text('Total', margin + 165, tableHeaderY + 8);
       
-      doc.setTextColor(...this.COLORS.black);
+      doc.setTextColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
       yPosition += 15;
 
       // Lignes du tableau
@@ -237,7 +237,7 @@ export class PdfService {
       this.drawRect(doc, totalsX, totalsStartY, totalsWidth, 35, this.COLORS.grayLight);
       
       // Bordure noire
-      doc.setDrawColor(...this.COLORS.black);
+      doc.setDrawColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
       doc.setLineWidth(1);
       doc.rect(totalsX, totalsStartY, totalsWidth, 35);
 
@@ -284,7 +284,7 @@ export class PdfService {
       
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(...this.COLORS.grayDark);
+      doc.setTextColor(this.COLORS.grayDark[0], this.COLORS.grayDark[1], this.COLORS.grayDark[2]);
       
       const footerText = 'AURADHOM - Streetwear haut de gamme. Silence = Puissance.';
       const footerWidth = doc.getTextWidth(footerText);
@@ -295,7 +295,7 @@ export class PdfService {
       doc.text(`Page ${pageNum}`, pageWidth - margin - 15, footerY + 8);
 
       // Réinitialiser la couleur
-      doc.setTextColor(...this.COLORS.black);
+      doc.setTextColor(this.COLORS.black[0], this.COLORS.black[1], this.COLORS.black[2]);
 
       // ============================================
       // TÉLÉCHARGER LE PDF
