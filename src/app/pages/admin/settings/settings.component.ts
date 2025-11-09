@@ -24,22 +24,37 @@ export class SettingsComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
 
-  ngOnInit(): void {
-    if (!this.authService.isLoggedIn()) {
-      this.router.navigate(['/admin/login']);
-      return;
-    }
-
+  constructor() {
+    // Initialiser les formulaires dans le constructeur pour satisfaire TypeScript strict mode
     const config = this.configService.getConfig();
     
     this.adminForm = this.fb.group({
       email: [config.admin.email, [Validators.required, Validators.email]],
       password: ['', [Validators.minLength(6)]],
       confirmPassword: ['']
-    }, { validators: this.passwordMatchValidator });
+    }, { validators: (form: FormGroup) => this.passwordMatchValidator(form) });
 
     this.whatsappForm = this.fb.group({
       phone: [this.formatPhoneDisplay(config.whatsappPhone), [Validators.required, Validators.pattern(/^\+242\s\d{2}\s\d{3}\s\d{4}$/)]]
+    });
+  }
+
+  ngOnInit(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/admin/login']);
+      return;
+    }
+
+    // Les formulaires sont déjà initialisés dans le constructor
+    // On peut mettre à jour les valeurs si nécessaire
+    const config = this.configService.getConfig();
+    
+    this.adminForm.patchValue({
+      email: config.admin.email
+    });
+
+    this.whatsappForm.patchValue({
+      phone: this.formatPhoneDisplay(config.whatsappPhone)
     });
   }
 
