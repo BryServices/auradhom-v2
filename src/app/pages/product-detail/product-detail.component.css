@@ -5,6 +5,8 @@
   padding: 16px;
   max-width: 1200px;
   margin: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (min-width: 640px) {
@@ -125,16 +127,25 @@
 .option-btn {
   border: 1px solid var(--gray-dark);
   min-width: 44px;
+  min-height: 44px;
   height: 44px;
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+}
+
+.option-btn:active {
+  transform: scale(0.95);
 }
 
 @media (min-width: 640px) {
   .option-btn {
     min-width: 48px;
     height: 48px;
+    min-height: 48px;
   }
 }
 
@@ -148,7 +159,8 @@
 
 .cta-whatsapp {
   width: 100%;
-  padding: 14px;
+  padding: 16px;
+  min-height: 50px;
   background-color: var(--gray-dark);
   color: var(--white);
   text-transform: uppercase;
@@ -157,7 +169,17 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  border: none;
+  border-radius: 0;
+}
+
+.cta-whatsapp:active {
+  transform: scale(0.98);
+  background-color: var(--gray-dark);
 }
 
 @media (min-width: 640px) {
@@ -222,8 +244,10 @@
 }
 
 .quantity-selector .qty-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -231,13 +255,45 @@
   background: transparent;
   color: var(--text-primary);
   cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+}
+
+.quantity-selector .qty-btn:active {
+  transform: scale(0.95);
+}
+
+@media (min-width: 640px) {
+  .quantity-selector .qty-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
 }
 
 .quantity-selector input[type="number"] {
   width: 72px;
-  height: 40px;
+  height: 44px;
+  min-height: 44px;
   background: transparent;
   color: var(--text-primary);
   border: 1px solid var(--gray-dark);
   text-align: center;
+  font-size: 1rem;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+.quantity-selector input[type="number"]::-webkit-outer-spin-button,
+.quantity-selector input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .quantity-selector input[type="number"] {
+    height: 40px;
+    min-height: 40px;
+  }
 }

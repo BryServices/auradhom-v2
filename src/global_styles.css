@@ -21,17 +21,24 @@
   padding: 0;
 }
 
-html, body {
+html {
   height: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
 }
 
 body {
+  height: 100%;
   background-color: var(--background);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -157,4 +164,49 @@ h3 {
 img {
   max-width: 100%;
   height: auto;
+  display: block;
+}
+
+/* Prevent horizontal scroll - only for specific elements */
+img, video, iframe, embed, object {
+  max-width: 100%;
+}
+
+/* Prevent container overflow */
+.container, [class*="container"] {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Touch targets - minimum 44px for mobile */
+button, a, input, select, textarea {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+@media (min-width: 768px) {
+  button, a, input, select, textarea {
+    min-height: auto;
+    min-width: auto;
+  }
+}
+
+/* Prevent text overflow */
+p, span, div, h1, h2, h3, h4, h5, h6 {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Smooth scrolling on mobile */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Improve tap highlighting on mobile */
+a, button {
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+  tap-highlight-color: rgba(255, 255, 255, 0.1);
 }
