@@ -5,11 +5,12 @@ import { AuthService } from '../../../services/auth.service';
 import { OrderService } from '../../../services/order.service';
 import { NotificationService } from '../../../services/notification.service';
 import { OrdersListComponent } from '../orders-list/orders-list.component';
+import { SettingsComponent } from '../settings/settings.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, OrdersListComponent],
+  imports: [CommonModule, OrdersListComponent, SettingsComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
@@ -24,7 +25,7 @@ export class AdminDashboardComponent implements OnInit {
   validatedCount = computed(() => this.orderService.getValidatedOrdersSignal()().length);
   unreadNotifications = signal(0);
 
-  activeTab = signal<'pending' | 'validated' | 'history'>('pending');
+  activeTab = signal<'pending' | 'validated' | 'history' | 'settings'>('pending');
   showNotifications = signal(false);
   notifications = signal<any[]>([]);
 
@@ -65,7 +66,7 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  setActiveTab(tab: 'pending' | 'validated' | 'history'): void {
+  setActiveTab(tab: 'pending' | 'validated' | 'history' | 'settings'): void {
     this.activeTab.set(tab);
   }
 

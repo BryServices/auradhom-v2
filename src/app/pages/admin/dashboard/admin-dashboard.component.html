@@ -31,6 +31,13 @@
           >
             Historique
           </button>
+          <button
+            [class.active]="activeTab() === 'settings'"
+            (click)="setActiveTab('settings')"
+            class="nav-button"
+          >
+            Paramètres
+          </button>
         </nav>
       </div>
       <div class="header-right">
@@ -78,8 +85,10 @@
       <app-orders-list orderType="pending"></app-orders-list>
     } @else if (activeTab() === 'validated') {
       <app-orders-list orderType="validated"></app-orders-list>
-    } @else {
+    } @else if (activeTab() === 'history') {
       <app-orders-list orderType="all"></app-orders-list>
+    } @else if (activeTab() === 'settings') {
+      <app-settings></app-settings>
     }
   </main>
 </div>

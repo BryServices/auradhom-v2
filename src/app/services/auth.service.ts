@@ -1,6 +1,7 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ConfigService } from './config.service';
 
 export interface AdminUser {
   id: string;
@@ -9,13 +10,12 @@ export interface AdminUser {
 }
 
 const STORAGE_KEY = 'auradhom_admin_auth';
-const DEFAULT_ADMIN_EMAIL = 'admin@auradhom.com';
-const DEFAULT_ADMIN_PASSWORD = 'admin123'; // À changer en production
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private configService = inject(ConfigService);
   private currentUser = signal<AdminUser | null>(this.getStoredUser());
   private isAuthenticated = computed(() => this.currentUser() !== null);
 
@@ -23,10 +23,10 @@ export class AuthService {
 
   login(email: string, password: string): Observable<boolean> {
     return new Observable(observer => {
-      // Simuler une vérification d'authentification
-      // En production, cela devrait faire un appel API
+      // Vérifier les identifiants depuis la configuration
       setTimeout(() => {
-        if (email === DEFAULT_ADMIN_EMAIL && password === DEFAULT_ADMIN_PASSWORD) {
+        const config = this.configService.getConfig();
+        if (email === config.admin.email && password === config.admin.password) {
           const user: AdminUser = {
             id: '1',
             email: email,
