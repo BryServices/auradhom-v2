@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { CustomerService } from '../../services/customer.service';
 import { CartService } from '../../services/cart.service';
+import { OrderService } from '../../services/order.service';
 import { Department, City } from '../../models/customer';
 
 @Component({
@@ -23,6 +24,7 @@ export class CustomerInfoComponent implements OnInit {
     private fb = inject(FormBuilder);
     private customerService = inject(CustomerService);
     private cartService = inject(CartService);
+    private orderService = inject(OrderService);
     private router = inject(Router);
     
     showSummary = false;
@@ -34,7 +36,8 @@ export class CustomerInfoComponent implements OnInit {
             address: ['', Validators.required],
             department: ['', Validators.required],
             city: ['', Validators.required],
-            district: ['', Validators.required]
+            district: ['', Validators.required],
+            phone: ['', [Validators.required, Validators.pattern(/^[0-9+\s-]+$/)]]
         });
     }
 
@@ -130,12 +133,22 @@ export class CustomerInfoComponent implements OnInit {
             total: this.cartService.total()
         };
 
-        // Générer le message WhatsApp et rediriger
+        // Générer le message WhatsApp
         const message = this.customerService.formatWhatsAppMessage(orderData);
+        
+        // CRÉER ET SAUVEGARDER LA COMMANDE DANS LA BASE DE DONNÉES AVANT TOUT
+        // La commande doit être sauvegardée dans la BD avant d'être visible dans le dashboard
+        const customer = this.customerForm.value;
+        
+        // Créer la commande en attente - elle sera automatiquement sauvegardée dans la BD via l'API
+        // La commande est sauvegardée dans la base de données AVANT d'être visible dans le dashboard
+        this.orderService.createPendingOrder(customer, cartItems, message);
+        
+        // Ouvrir WhatsApp
         const whatsappLink = this.customerService.getWhatsAppLink(message);
         window.open(whatsappLink, '_blank');
         
-        // Effacer toutes les données après l'envoi du message
+        // Effacer les données après la sauvegarde de la commande
         // Vider le panier
         this.cartService.clear();
         

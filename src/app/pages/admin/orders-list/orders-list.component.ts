@@ -36,10 +36,28 @@ export class OrdersListComponent implements OnInit {
   statusFilter = signal<OrderStatus | 'all'>('all');
 
   ngOnInit(): void {
+    // Charger les commandes depuis la base de données
     this.loadOrders();
+    
+    // Écouter les changements de commandes
     this.orderService.onOrdersChanged().subscribe(() => {
       this.loadOrders();
     });
+    
+    // Recharger les commandes depuis la BD toutes les 3 secondes
+    // pour détecter les nouvelles commandes créées sur le site
+    // (Dans une vraie application, on utiliserait WebSockets ou Server-Sent Events)
+    setInterval(() => {
+      this.refreshOrdersFromDatabase();
+    }, 3000);
+  }
+
+  /**
+   * Recharger les commandes depuis la base de données
+   */
+  private refreshOrdersFromDatabase(): void {
+    // Recharger depuis l'API pour récupérer les nouvelles commandes
+    this.orderService.refreshOrdersFromDatabase();
   }
 
   loadOrders(): void {

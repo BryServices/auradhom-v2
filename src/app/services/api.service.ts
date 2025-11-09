@@ -142,17 +142,36 @@ export class ApiService {
 
   /**
    * Créer une nouvelle commande en attente
+   * IMPORTANT: La commande est IMMÉDIATEMENT sauvegardée dans la base de données
    */
   createPendingOrder(order: any): Observable<ApiResponse<any>> {
+    // Récupérer les commandes existantes depuis la BD
     const orders = this.db.get('pending_orders') || [];
+    
+    // Vérifier si la commande existe déjà (éviter les doublons)
+    const existingOrder = orders.find((o: any) => o.id === order.id || o.orderId === order.orderId);
+    if (existingOrder) {
+      return of({
+        success: false,
+        error: 'Cette commande existe déjà',
+        data: existingOrder
+      }).pipe(delay(this.API_DELAY));
+    }
+    
+    // Ajouter la nouvelle commande
     orders.push(order);
+    
+    // SAUVEGARDER DANS LA BASE DE DONNÉES (localStorage qui simule la BD)
     this.db.set('pending_orders', orders);
     this.saveToStorage('auradhom_pending_orders', orders);
+    
+    console.log('✅ Commande sauvegardée dans la BD:', order.orderId);
+    console.log('📊 Total de commandes en attente:', orders.length);
     
     return of({
       success: true,
       data: order,
-      message: 'Commande créée avec succès'
+      message: 'Commande créée et sauvegardée avec succès dans la base de données'
     }).pipe(delay(this.API_DELAY));
   }
 

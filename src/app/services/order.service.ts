@@ -36,16 +36,19 @@ export class OrderService {
 
   /**
    * Charger toutes les commandes depuis l'API
+   * Cette méthode charge les commandes depuis la base de données
    */
   private loadOrdersFromApi(): void {
     // Charger les commandes en attente
     this.apiService.getPendingOrders().subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.pendingOrders.set(response.data.map((o: any) => ({
+          const orders = response.data.map((o: any) => ({
             ...o,
             createdAt: new Date(o.createdAt)
-          })));
+          }));
+          this.pendingOrders.set(orders);
+          this.ordersChanged.next(); // Notifier les changements
         }
       },
       error: (error) => {
@@ -57,11 +60,13 @@ export class OrderService {
     this.apiService.getValidatedOrders().subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.validatedOrders.set(response.data.map((o: any) => ({
+          const orders = response.data.map((o: any) => ({
             ...o,
             createdAt: new Date(o.createdAt),
             validatedAt: new Date(o.validatedAt)
-          })));
+          }));
+          this.validatedOrders.set(orders);
+          this.ordersChanged.next(); // Notifier les changements
         }
       },
       error: (error) => {
@@ -73,11 +78,13 @@ export class OrderService {
     this.apiService.getRejectedOrders().subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.rejectedOrders.set(response.data.map((o: any) => ({
+          const orders = response.data.map((o: any) => ({
             ...o,
             createdAt: new Date(o.createdAt),
             rejectedAt: new Date(o.rejectedAt)
-          })));
+          }));
+          this.rejectedOrders.set(orders);
+          this.ordersChanged.next(); // Notifier les changements
         }
       },
       error: (error) => {
@@ -86,7 +93,17 @@ export class OrderService {
     });
   }
 
+  /**
+   * Recharger toutes les commandes depuis la base de données
+   * Méthode publique pour permettre le rafraîchissement manuel
+   * Utile pour détecter les nouvelles commandes créées sur le site
+   */
+  refreshOrdersFromDatabase(): void {
+    this.loadOrdersFromApi();
+  }
+
   // Créer une nouvelle commande en attente
+  // IMPORTANT: La commande est IMMÉDIATEMENT sauvegardée dans la base de données via l'API
   createPendingOrder(
     customer: Customer,
     items: CartItem[],
@@ -104,20 +121,29 @@ export class OrderService {
       status: OrderStatus.PENDING,
       createdAt: new Date(),
       whatsappMessage: whatsappMessage,
-      phone: customer.phone
+      phone: customer.phone || ''
     };
 
-    // Sauvegarder via l'API
+    // SAUVEGARDER IMMÉDIATEMENT DANS LA BASE DE DONNÉES VIA L'API
+    // La commande est stockée dans la BD avant d'être visible dans le dashboard
     this.apiService.createPendingOrder(order).subscribe({
       next: (response) => {
         if (response.success) {
+          // Mettre à jour le signal local seulement après confirmation de la sauvegarde
           const orders = [...this.pendingOrders(), order];
           this.pendingOrders.set(orders);
           this.ordersChanged.next();
+          console.log('Commande sauvegardée dans la base de données:', order.orderId);
+        } else {
+          console.error('Échec de la sauvegarde de la commande:', response.error);
         }
       },
       error: (error) => {
-        console.error('Erreur lors de la création de la commande', error);
+        console.error('Erreur lors de la création de la commande dans la BD', error);
+        // Même en cas d'erreur, on ajoute localement pour ne pas perdre la commande
+        const orders = [...this.pendingOrders(), order];
+        this.pendingOrders.set(orders);
+        this.ordersChanged.next();
       }
     });
 
