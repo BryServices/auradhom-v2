@@ -27,7 +27,7 @@ export interface ProductVariant {
   id: string;
   productId: string;
   size: string;
-  color: { name: string; hex: string };
+  color?: { name: string; hex: string }; // Optionnel pour gérer les cas où il n'est pas défini
   sku: string;
   price?: number; // Prix spécifique à la variante (optionnel)
   stock: number;
@@ -176,8 +176,9 @@ export interface SEOData {
 /**
  * Produit étendu avec toutes les fonctionnalités
  */
-export interface ExtendedProduct extends Omit<Product, 'stock' | 'colors' | 'sizes'> {
+export interface ExtendedProduct extends Omit<Product, 'stock' | 'colors' | 'sizes' | 'id'> {
   // Informations de base
+  id: string; // ID en string pour cohérence avec les services
   status: ProductStatus;
   sku: string; // SKU principal
   barcode?: string;
@@ -190,8 +191,8 @@ export interface ExtendedProduct extends Omit<Product, 'stock' | 'colors' | 'siz
   // Variantes
   variants: ProductVariant[];
   
-  // Pricing
-  pricing: Pricing;
+  // Pricing (optionnel pour gérer les cas où il n'est pas encore initialisé)
+  pricing?: Pricing;
   
   // Stock global (somme de toutes les variantes)
   totalStock: number;

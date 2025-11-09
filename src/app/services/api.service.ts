@@ -592,11 +592,11 @@ export class ApiService {
     }
     
     if (filters.minPrice !== undefined) {
-      products = products.filter((p: any) => p.pricing?.basePrice >= filters.minPrice);
+      products = products.filter((p: any) => p.pricing && p.pricing.basePrice >= filters.minPrice);
     }
     
     if (filters.maxPrice !== undefined) {
-      products = products.filter((p: any) => p.pricing?.basePrice <= filters.maxPrice);
+      products = products.filter((p: any) => p.pricing && p.pricing.basePrice <= filters.maxPrice);
     }
     
     if (filters.inStock) {
@@ -1135,10 +1135,10 @@ export class ApiService {
     const lowStockProducts = products.filter((p: any) => p.totalStock > 0 && p.totalStock < 10);
     const outOfStockProducts = products.filter((p: any) => p.totalStock === 0);
     const totalStockValue = products.reduce((sum: number, p: any) => {
-      return sum + (p.totalStock || 0) * (p.pricing?.basePrice || 0);
+      return sum + (p.totalStock || 0) * (p.pricing && p.pricing.basePrice ? p.pricing.basePrice : 0);
     }, 0);
     const averagePrice = products.length > 0
-      ? products.reduce((sum: number, p: any) => sum + (p.pricing?.basePrice || 0), 0) / products.length
+      ? products.reduce((sum: number, p: any) => sum + (p.pricing && p.pricing.basePrice ? p.pricing.basePrice : 0), 0) / products.length
       : 0;
     const categories = this.db.get('categories') || [];
 

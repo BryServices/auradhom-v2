@@ -28,8 +28,8 @@ export class ProductsListComponent implements OnInit {
     
     if (query) {
       filtered = filtered.filter(p => 
-        p.name?.toLowerCase().includes(query) ||
-        p.sku?.toLowerCase().includes(query)
+        (p.name && p.name.toLowerCase().includes(query)) ||
+        (p.sku && p.sku.toLowerCase().includes(query))
       );
     }
     

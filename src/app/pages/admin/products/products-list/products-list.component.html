@@ -48,7 +48,13 @@
           <tr>
             <td>{{ product.name }}</td>
             <td>{{ product.sku || '-' }}</td>
-            <td>{{ product.pricing?.basePrice | number }} FCFA</td>
+            <td>
+              @if (product.pricing) {
+                {{ product.pricing.basePrice | number }} FCFA
+              } @else {
+                -
+              }
+            </td>
             <td [class.low-stock]="(product.totalStock || 0) < 10">
               {{ product.totalStock || 0 }}
             </td>
@@ -58,10 +64,10 @@
               </span>
             </td>
             <td class="actions">
-              <button [routerLink]="['/admin/products', product.id]">Voir</button>
-              <button [routerLink]="['/admin/products', product.id, 'edit']">Éditer</button>
-              <button (click)="duplicateProduct(product.id)">Dupliquer</button>
-              <button (click)="deleteProduct(product.id)" class="btn-danger">Supprimer</button>
+              <button [routerLink]="['/admin/products', String(product.id)]">Voir</button>
+              <button [routerLink]="['/admin/products', String(product.id), 'edit']">Éditer</button>
+              <button (click)="duplicateProduct(String(product.id))">Dupliquer</button>
+              <button (click)="deleteProduct(String(product.id))" class="btn-danger">Supprimer</button>
             </td>
           </tr>
         }

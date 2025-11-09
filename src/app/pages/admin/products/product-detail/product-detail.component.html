@@ -13,7 +13,7 @@
         <p class="product-sku">SKU: {{ product.sku }}</p>
       </div>
       <div class="header-actions">
-        <button [routerLink]="['/admin/products', product.id, 'edit']" class="btn-primary">
+        <button [routerLink]="['/admin/products', String(product.id), 'edit']" class="btn-primary">
           Éditer
         </button>
         <button (click)="deleteProduct()" class="btn-danger">
@@ -52,20 +52,27 @@
       <div class="detail-section">
         <h2>Prix</h2>
         <div class="detail-grid">
-          <div class="detail-item">
-            <span class="detail-label">Prix de base:</span>
-            <span>{{ product.pricing?.basePrice | number }} FCFA</span>
-          </div>
-          @if (product.pricing?.compareAtPrice) {
+          @if (product.pricing) {
             <div class="detail-item">
-              <span class="detail-label">Prix comparé:</span>
-              <span>{{ product.pricing.compareAtPrice | number }} FCFA</span>
+              <span class="detail-label">Prix de base:</span>
+              <span>{{ product.pricing.basePrice | number }} FCFA</span>
             </div>
-          }
-          @if (product.pricing?.costPrice) {
+            @if (product.pricing.compareAtPrice) {
+              <div class="detail-item">
+                <span class="detail-label">Prix comparé:</span>
+                <span>{{ product.pricing.compareAtPrice | number }} FCFA</span>
+              </div>
+            }
+            @if (product.pricing.costPrice) {
+              <div class="detail-item">
+                <span class="detail-label">Prix de revient:</span>
+                <span>{{ product.pricing.costPrice | number }} FCFA</span>
+              </div>
+            }
+          } @else {
             <div class="detail-item">
-              <span class="detail-label">Prix de revient:</span>
-              <span>{{ product.pricing.costPrice | number }} FCFA</span>
+              <span class="detail-label">Prix:</span>
+              <span>Non défini</span>
             </div>
           }
         </div>
@@ -94,9 +101,13 @@
                 <tr>
                   <td>{{ variant.size }}</td>
                   <td>
-                    <span class="color-badge" [style.background-color]="variant.color?.hex">
-                      {{ variant.color?.name }}
-                    </span>
+                    @if (variant.color) {
+                      <span class="color-badge" [style.background-color]="variant.color.hex">
+                        {{ variant.color.name }}
+                      </span>
+                    } @else {
+                      <span>-</span>
+                    }
                   </td>
                   <td>{{ variant.sku }}</td>
                   <td [class.low-stock]="(variant.stock || 0) < 10">

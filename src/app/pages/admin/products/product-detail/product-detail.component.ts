@@ -44,7 +44,9 @@ export class ProductDetailComponent implements OnInit {
 
   deleteProduct(): void {
     if (this.product && confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
-      this.productService.deleteProduct(this.product.id, false).subscribe({
+      // Convertir l'ID en string pour assurer la compatibilité
+      const productId = String(this.product.id);
+      this.productService.deleteProduct(productId, false).subscribe({
         next: () => {
           this.router.navigate(['/admin/products']);
         },

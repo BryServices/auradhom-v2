@@ -141,10 +141,17 @@ export class AdminProductService {
   /**
    * Générer un SKU unique
    */
-  generateSKU(productName: string, variant?: { size?: string; color?: string }): string {
+  generateSKU(productName: string, variant?: { size?: string; color?: string | { name: string; hex: string } }): string {
     const prefix = productName.substring(0, 3).toUpperCase().replace(/\s/g, '');
     const size = variant?.size ? variant.size : '';
-    const color = variant?.color ? variant.color.name.substring(0, 2).toUpperCase() : '';
+    let color = '';
+    if (variant?.color) {
+      if (typeof variant.color === 'string') {
+        color = variant.color.substring(0, 2).toUpperCase();
+      } else if (variant.color.name) {
+        color = variant.color.name.substring(0, 2).toUpperCase();
+      }
+    }
     const timestamp = Date.now().toString().slice(-6);
     return `${prefix}-${size}${color}-${timestamp}`;
   }
