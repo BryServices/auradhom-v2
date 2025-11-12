@@ -54,26 +54,6 @@ export const APP_ROUTES: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'admin/products',
-    loadComponent: () => import('./pages/admin/products/products-list/products-list.component').then(c => c.ProductsListComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'admin/products/new',
-    loadComponent: () => import('./pages/admin/products/product-form/product-form.component').then(c => c.ProductFormComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'admin/products/:id',
-    loadComponent: () => import('./pages/admin/products/product-detail/product-detail.component').then(c => c.ProductDetailComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'admin/products/:id/edit',
-    loadComponent: () => import('./pages/admin/products/product-form/product-form.component').then(c => c.ProductFormComponent),
-    canActivate: [authGuard]
-  },
-  {
     path: '**',
     redirectTo: '',
     pathMatch: 'full'
