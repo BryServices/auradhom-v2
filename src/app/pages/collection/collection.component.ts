@@ -26,6 +26,12 @@ export class CollectionComponent {
   thumbsById = signal<Record<number, string[]>>({});
   filterOptions = this.productService.getFilterOptions();
   
+  // Recherche et tri
+  searchQuery = signal('');
+  sortBy = signal<'popular' | 'price-asc' | 'price-desc' | 'new'>('popular');
+  
+  // Gestion filtres sidebar
+  isFilterOpen = signal(false);
   filterForm = this.fb.group({
     silhouette: [[] as string[]],
     type: [[] as string[]],
@@ -36,32 +42,50 @@ export class CollectionComponent {
   filteredProducts = computed(() => {
     const allProducts = this.products();
     const filters = this.filterForm.value;
+    const query = this.searchQuery().toLowerCase();
 
     const hasSilhouette = filters.silhouette && filters.silhouette.length > 0;
     const hasType = filters.type && filters.type.length > 0;
     const hasMatiere = filters.matiere && filters.matiere.length > 0;
     const hasTeinte = filters.teinte && filters.teinte.length > 0;
 
-    if (!hasSilhouette && !hasType && !hasMatiere && !hasTeinte) {
-      return allProducts;
+    let results = allProducts;
+
+    // Recherche texte
+    if (query) {
+      results = results.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.description.toLowerCase().includes(query)
+      );
     }
 
-    return allProducts.filter(p => {
-      const sizeMatch = !hasSilhouette || (filters.silhouette?.length && p.sizes.some(s => filters.silhouette!.includes(s)));
-      const typeMatch = !hasType || (filters.type?.length && filters.type.includes(p.type));
-      const materialMatch = !hasMatiere || (filters.matiere?.length && filters.matiere.includes(p.material));
-      const colorMatch = !hasTeinte || (filters.teinte?.length && p.colors.some(c => filters.teinte!.includes(c.name)));
-      return sizeMatch && typeMatch && materialMatch && colorMatch;
-    });
+    // Filtres
+    if (hasSilhouette || hasType || hasMatiere || hasTeinte) {
+      results = results.filter(p => {
+        const sizeMatch = !hasSilhouette || (filters.silhouette?.length && p.sizes.some((s: string) => filters.silhouette!.includes(s)));
+        const typeMatch = !hasType || (filters.type?.length && filters.type.includes(p.type));
+        const materialMatch = !hasMatiere || (filters.matiere?.length && filters.matiere.includes(p.material));
+        const colorMatch = !hasTeinte || (filters.teinte?.length && p.colors.some((c: any) => filters.teinte!.includes(c.name)));
+        return sizeMatch && typeMatch && materialMatch && colorMatch;
+      });
+    }
+
+    // Tri
+    const sort = this.sortBy();
+    if (sort === 'price-asc') {
+      results = [...results].sort((a, b) => a.price - b.price);
+    } else if (sort === 'price-desc') {
+      results = [...results].sort((a, b) => b.price - a.price);
+    }
+
+    return results;
   });
 
-  isFilterOpen = signal(false);
-
   constructor() {
-    this.productService.getProducts().subscribe(data => {
+    this.productService.getProducts().subscribe((data: any) => {
       this.products.set(data);
       const map: Record<number, string> = {};
-      data.forEach(prod => {
+      data.forEach((prod: any) => {
         // Par défaut, utilise la première couleur si disponible, sinon l'image du produit
         const firstColor = prod.colors?.[0]?.name;
         if (firstColor) {
@@ -70,7 +94,7 @@ export class CollectionComponent {
           map[prod.id] = defaultImg;
           
           // Chercher les images disponibles de manière asynchrone
-          this.preloadService.findColorThumbnails(firstColor, 6).then(imgs => {
+          this.preloadService.findColorThumbnails(firstColor, 6).then((imgs: any) => {
             const next = { ...this.thumbsById() };
             if (imgs.length > 0) {
               // Cas spécial pour le produit beige : s'assurer que biege.png est la 3ème image
@@ -230,5 +254,28 @@ export class CollectionComponent {
 
   toggleFilter() {
     this.isFilterOpen.set(!this.isFilterOpen());
+  }
+
+  onSearchChange(value: string) {
+    this.searchQuery.set(value);
+  }
+
+  onSortChange(value: string) {
+    this.sortBy.set(value as 'popular' | 'price-asc' | 'price-desc' | 'new');
+  }
+
+  clearFilters() {
+    this.filterForm.reset({
+      silhouette: [],
+      type: [],
+      matiere: [],
+      teinte: []
+    });
+    this.searchQuery.set('');
+    this.sortBy.set('popular');
+  }
+
+  resetSearch() {
+    this.searchQuery.set('');
   }
 }

@@ -1,75 +1,8 @@
-<main class="main-content">
-  <section class="hero-container fade-in">
-    <div class="hero-background"></div>
-    <div class="hero-content container">
-      <h1>AURADHOM</h1>
-      <p>Ne dis rien. Sois.</p>
-
-      <div class="hero-actions">
-        <a routerLink="/collection" class="cta-button">Découvrir la collection</a>
-
-        <div class="search-box">
-          <input
-            type="search"
-            placeholder="Rechercher un produit, couleur, taille..."
-            (input)="onSearchChange($any($event.target).value)"
-            value=""
-            aria-label="Recherche">
-          <button class="search-btn" aria-label="Rechercher">🔍</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="featured-section container">
-    <div class="section-header">
-      <h2>À la une</h2>
-      <div class="controls">
-        <button class="ctrl" (click)="prevFeatured()" aria-label="Précédent">◀</button>
-        <button class="ctrl" (click)="nextFeatured()" aria-label="Suivant">▶</button>
-      </div>
-    </div>
-
-    <div id="featured-carousel" class="featured-carousel">
-      <article *ngFor="let p of filtered" class="product-card">
-        <a [routerLink]="['/produit', p.slug]">
-          <div class="thumb">
-            <img [src]="p.image" [alt]="p.name" loading="lazy">
-          </div>
-          <div class="card-body">
-            <h3>{{ p.name }}</h3>
-            <p class="desc">{{ p.description }}</p>
-            <div class="meta">
-              <span class="price">{{ p.price | number }} FCFA</span>
-              <button class="add" (click)="$event.preventDefault(); addToCart(p)">Ajouter</button>
-            </div>
-          </div>
-        </a>
-      </article>
-    </div>
-  </section>
-
-  <section class="categories container">
-    <h2>Catégories rapides</h2>
-    <div class="cat-grid">
-      <a routerLink="/collection?type=T-shirt" class="cat">
-        <div class="cat-thumb" style="background: linear-gradient(180deg, rgba(0,0,0,0.2), transparent)">
-          <img src="assets/blanc.png" alt="T-shirt" loading="lazy">
-        </div>
-        <span>T-shirts</span>
-      </a>
-      <a routerLink="/collection?type=Accessoire" class="cat">
-        <div class="cat-thumb">
-          <img src="assets/noir.png" alt="Accessoire" loading="lazy">
-        </div>
-        <span>Accessoires</span>
-      </a>
-      <a routerLink="/collection" class="cat">
-        <div class="cat-thumb">
-          <img src="assets/biege.png" alt="Nouveautés" loading="lazy">
-        </div>
-        <span>Nouveautés</span>
-      </a>
-    </div>
-  </section>
-</main>
+<div class="hero-container fade-in">
+  <div class="hero-background"></div>
+  <div class="hero-content">
+    <h1>AURADHOM</h1>
+    <p>Ne dis rien. Sois.</p>
+    <a routerLink="/collection" class="cta-button">Découvrir la collection</a>
+  </div>
+</div>

@@ -3,9 +3,111 @@
     <div class="collection-info-inner">
       <h1 class="collection-title">Collection T-Shirts AURADHOM</h1>
       <p class="collection-lead">Découvrez la nouvelle collection de t-shirts AURADHOM, pensée pour les esprits libres et les passionnés de style simple mais affirmé.</p>
-      <p class="collection-text">Chaque pièce est conçue pour offrir confort, élégance et durabilité. Nos t-shirts sont disponibles en cinq couleurs intemporelles — blanc, noir, beige, marron et gris — pour s’adapter à chaque personnalité.</p>
+      <p class="collection-text">Chaque pièce est conçue pour offrir confort, élégance et durabilité. Nos t-shirts sont disponibles en cinq couleurs intemporelles — blanc, noir, beige, marron et gris — pour s'adapter à chaque personnalité.</p>
     </div>
   </section>
+
+  <!-- Barre de recherche et tri -->
+  <section class="search-sort-bar">
+    <div class="search-wrapper">
+      <input 
+        type="search" 
+        placeholder="Rechercher un produit..." 
+        class="search-input"
+        (input)="onSearchChange($any($event.target).value)"
+        [value]="searchQuery()"
+        aria-label="Rechercher">
+      <button class="search-icon" aria-label="Rechercher">🔍</button>
+    </div>
+    
+    <div class="controls">
+      <select class="sort-select" (change)="onSortChange($any($event.target).value)" [value]="sortBy()" aria-label="Trier">
+        <option value="popular">Populaires</option>
+        <option value="price-asc">Prix ⬆️ (Moins cher)</option>
+        <option value="price-desc">Prix ⬇️ (Plus cher)</option>
+        <option value="new">Nouveautés</option>
+      </select>
+      
+      <button class="filter-toggle" (click)="toggleFilter()" [class.active]="isFilterOpen()" aria-label="Filtres">
+        ⚙️ Filtres
+      </button>
+    </div>
+  </section>
+
+  <!-- Compteur résultats -->
+  <div class="results-info">
+    <p>{{ filteredProducts().length }} produit(s) trouvé(s)</p>
+    @if(searchQuery() || (filterForm.value.silhouette?.length || filterForm.value.type?.length || filterForm.value.matiere?.length || filterForm.value.teinte?.length)) {
+      <button class="clear-btn" (click)="clearFilters()">Réinitialiser</button>
+    }
+  </div>
+
+  <!-- Sidebar filtres -->
+  <div class="filters-sidebar" [class.open]="isFilterOpen()">
+    <div class="filters-header">
+      <h2>Filtres</h2>
+      <button class="close-filters" (click)="toggleFilter()" aria-label="Fermer filtres">✕</button>
+    </div>
+
+    <form [formGroup]="filterForm" class="filters-form">
+      <div class="filter-group">
+        <h3>Tailles</h3>
+        @for(size of filterOptions.silhouette; track size) {
+          <label class="checkbox-item">
+            <input 
+              type="checkbox" 
+              [value]="size" 
+              (change)="onCheckboxChange($event, 'silhouette')">
+            <span>{{ size }}</span>
+          </label>
+        }
+      </div>
+
+      <div class="filter-group">
+        <h3>Type</h3>
+        @for(type of filterOptions.type; track type) {
+          <label class="checkbox-item">
+            <input 
+              type="checkbox" 
+              [value]="type" 
+              (change)="onCheckboxChange($event, 'type')">
+            <span>{{ type }}</span>
+          </label>
+        }
+      </div>
+
+      <div class="filter-group">
+        <h3>Matière</h3>
+        @for(mat of filterOptions.matiere; track mat) {
+          <label class="checkbox-item">
+            <input 
+              type="checkbox" 
+              [value]="mat" 
+              (change)="onCheckboxChange($event, 'matiere')">
+            <span>{{ mat }}</span>
+          </label>
+        }
+      </div>
+
+      <div class="filter-group">
+        <h3>Couleur</h3>
+        @for(color of filterOptions.teinte; track color) {
+          <label class="checkbox-item">
+            <input 
+              type="checkbox" 
+              [value]="color" 
+              (change)="onCheckboxChange($event, 'teinte')">
+            <span>{{ color }}</span>
+          </label>
+        }
+      </div>
+    </form>
+  </div>
+
+  <!-- Overlay filtres mobile -->
+  @if(isFilterOpen()) {
+    <div class="filters-overlay" (click)="toggleFilter()"></div>
+  }
 
   <main class="product-grid-container">
     <div class="product-grid">
