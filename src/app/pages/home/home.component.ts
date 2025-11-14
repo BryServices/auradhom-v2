@@ -69,8 +69,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       price: product.price,
       quantity: 1,
       image: product.image,
-      size: product.sizes?.[0] || null,
-      color: product.colors?.[0]?.name || null
+      size: product.sizes?.[0] ?? undefined,
+      color: product.colors?.[0]?.name ?? undefined
     });
   }
 }
