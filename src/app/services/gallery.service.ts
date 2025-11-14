@@ -20,30 +20,49 @@ export interface FetchResult {
 
 @Injectable({ providedIn: 'root' })
 export class GalleryService {
-  private data: GalleryImage[];
+  private data: GalleryImage[] = [];
 
   private categories = ['All', 'T-Shirts', 'Posters', 'Stickers', 'Artworks', 'Covers'];
   private tags = ['minimal', 'vintage', 'street', 'limited', 'promo', 'featured'];
 
-  // List of local images from src/galery folder
-  private localImages = [
-    '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg',
-    'B1.jpg', 'B2.jpg',
-    'cover0.jpg', 'cover1.jpg', 'cover2.jpg', 'cover3.jpeg', 'cover4.jpg',
-    'im1.png', 'im2.jpeg',
-    'img (1).jpeg', 'img (2).jpeg', 'img (3).jpeg', 'img (4).jpeg',
-    'img (5).jpeg', 'img (6).jpeg', 'img (7).jpeg', 'img (8).jpeg',
-    'p1.jpeg', 'p2.jpeg', 'p3.jpeg', 'p4.jpeg',
-    'S1.jpg', 'S2.jpg', 'S3.jpg', 'S4.jpg', 'S5.jpg',
-    'T0.jpeg', 'T1.jpeg', 'T2.jpeg', 'T3.jpg',
-    'TS1.jpeg',
-    'vvvv.jpg',
-    'W1.jpeg', 'W2.jpeg', 'W3.png',
-    'Y1.jpeg', 'Y2.jpg'
-  ];
-
   constructor() {
-    this.data = this.localImages.map((filename, i) => {
+    this.initializeData();
+  }
+
+  private initializeData(): void {
+    // Load images from the gallery folder
+    // This array is manually updated when images are added/removed
+    const imageFilenames = [
+      '1.jpg',
+      '2.jpg',
+      '3.jpg',
+      '4.jpg',
+      '5.jpg',
+      'cover2.jpg',
+      'im1.png',
+      'im2.jpeg',
+      'img (1).jpeg',
+      'img (2).jpeg',
+      'img (4).jpeg',
+      'img (5).jpeg',
+      'img (6).jpeg',
+      'img (7).jpeg',
+      'img (8).jpeg',
+      'p1.jpeg',
+      'p2.jpeg',
+      'p3.jpeg',
+      'p4.jpeg',
+      'T0.jpeg',
+      'TS1.jpeg',
+      'vvvv.jpg',
+      'W1.jpeg',
+      'W2.jpeg',
+      'W3.png',
+      'Y1.jpeg',
+      'Y2.jpg'
+    ];
+
+    this.data = imageFilenames.map((filename, i) => {
       const id = i + 1;
       const imagePath = `/galery/${filename}`;
 
