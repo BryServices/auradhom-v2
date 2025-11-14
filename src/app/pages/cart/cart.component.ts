@@ -31,14 +31,14 @@ export class CartComponent {
 
     // Vérifier si les informations client sont complètes
     if (!this.customerService.hasRequiredInfo()) {
-      this.router.navigate(['/customer-info']);
+      this.router.navigate(['/infos-livraison']);
       return;
     }
 
     // Récupérer les informations client (valeur synchrone)
     const customer = this.customerService.getCustomerInfoValue();
     if (!customer) {
-      this.router.navigate(['/customer-info']);
+      this.router.navigate(['/infos-livraison']);
       return;
     }
 
