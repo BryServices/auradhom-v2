@@ -1,103 +1,41 @@
-<div class="cart-container container fade-in" id="main-content" role="main">
-  <div class="cart-header">
-    <h1>Panier</h1>
-    <p class="cart-subtitle">{{ items().length }} article(s)</p>
-  </div>
+<div class="cart-container container fade-in">
+  <h1>Panier</h1>
 
   @if(items().length === 0) {
-    <div class="empty-cart">
-      <p class="empty-message">Votre panier est vide.</p>
-      <p class="empty-hint">Commencez par ajouter des articles à votre panier.</p>
-      <a routerLink="/collection" class="link btn-continue">Continuer mes achats</a>
-    </div>
+    <p>Votre panier est vide.</p>
+    <a routerLink="/collection" class="link">Continuer mes achats</a>
   } @else {
     <ul class="cart-list">
       @for (item of items(); track item.slug + item.size + item.color) {
         <li class="cart-item">
-          <div class="item-image">
-            <img [src]="item.image" [alt]="item.name" loading="lazy">
-          </div>
+          <img [src]="item.image" [alt]="item.name">
           <div class="meta">
-            <a [routerLink]="['/produit', item.slug]" class="item-name">{{ item.name }}</a>
+            <p class="name">{{ item.name }}</p>
             <p class="sub">Taille {{ item.size }} • {{ item.color }}</p>
             <div class="qty">
-              <button 
-                class="qty-btn" 
-                (click)="decrement($index)" 
-                [disabled]="item.quantity <= 1"
-                aria-label="Diminuer la quantité"
-                title="Diminuer">−</button>
-              <input 
-                type="number" 
-                min="1" 
-                [value]="item.quantity" 
-                (input)="onQtyInput($index, $event)" 
-                aria-label="Quantité du produit"
-                class="qty-input">
-              <button 
-                class="qty-btn" 
-                (click)="increment($index)" 
-                aria-label="Augmenter la quantité"
-                title="Augmenter">+</button>
+              <button class="qty-btn" (click)="decrement($index)" aria-label="Diminuer">−</button>
+              <input type="number" min="1" [value]="item.quantity" (input)="onQtyInput($index, $event)" aria-label="Quantité">
+              <button class="qty-btn" (click)="increment($index)" aria-label="Augmenter">+</button>
             </div>
           </div>
-          <div class="item-price">
-            <span class="price-label">Prix</span>
-            <span class="price-value">{{ (item.price * item.quantity) | formatFcfa }}</span>
-          </div>
-          <button 
-            class="remove" 
-            (click)="confirmRemove($index)"
-            aria-label="Supprimer cet article du panier"
-            title="Supprimer">
-            <svg class="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
-            </svg>
-          </button>
+          <div class="price">{{ (item.price * item.quantity) | formatFcfa }}</div>
+          <button class="remove" (click)="remove($index)">Supprimer</button>
         </li>
       }
     </ul>
 
     <div class="cart-footer">
-      <a routerLink="/collection" class="continue">← Continuer mes achats</a>
+      <a routerLink="/collection" class="continue">Continuer mes achats</a>
       <div class="summary">
-        <div class="summary-row">
-          <span class="summary-label">Sous-total</span>
-          <strong class="summary-value">{{ (total() | formatFcfa) }}</strong>
+        <div class="row">
+          <span>Livraison</span>
+          <strong>0 FCFA</strong>
         </div>
-        <div class="summary-row">
-          <span class="summary-label">Livraison</span>
-          <strong class="summary-value">0 FCFA</strong>
+        <div class="row total-row">
+          <span>Total</span>
+          <strong>{{ total() | formatFcfa }}</strong>
         </div>
-        <div class="summary-row total-row">
-          <span class="total-label">Total</span>
-          <strong class="total-value">{{ total() | formatFcfa }}</strong>
-        </div>
-        <button 
-          class="checkout" 
-          (click)="proceedToCheckout()"
-          [disabled]="items().length === 0"
-          aria-label="Procéder à la commande">
-          Commander maintenant
-        </button>
-        <p class="checkout-hint">Sécurisé et simple via WhatsApp</p>
-      </div>
-    </div>
-  }
-
-  <!-- Confirmation dialog -->
-  @if(showRemoveConfirm) {
-    <div class="modal-overlay" (click)="cancelRemove()">
-      <div class="modal" (click)="$event.stopPropagation()">
-        <h3>Confirmer la suppression</h3>
-        <p>Êtes-vous sûr de vouloir supprimer cet article du panier ?</p>
-        <div class="modal-actions">
-          <button class="btn-cancel" (click)="cancelRemove()">Annuler</button>
-          <button class="btn-confirm" (click)="confirmRemoveProduct()">Supprimer</button>
-        </div>
+        <button class="checkout" (click)="proceedToCheckout()">Commander</button>
       </div>
     </div>
   }

@@ -7,23 +7,6 @@
   border-bottom: 1px solid var(--gray-dark);
 }
 
-/* Skip to main content link - visible on focus */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--sand);
-  color: var(--black);
-  padding: 8px;
-  z-index: 999;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.skip-link:focus {
-  top: 0;
-}
-
 /* Mobile: 640px and up */
 @media (min-width: 640px) {
   .header {
