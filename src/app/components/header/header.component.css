@@ -51,6 +51,12 @@
   display: none;
 }
 
+.desktop-nav a.active {
+  color: var(--sand);
+  border-bottom: 2px solid rgba(216,210,201,0.12);
+  padding-bottom: 4px;
+}
+
 .mobile-header-right {
   display: flex;
   align-items: center;
@@ -100,6 +106,10 @@
   font-family: var(--font-heading);
   font-size: 1.75rem;
   color: var(--text-primary);
+}
+
+.mobile-nav a.active {
+  color: var(--sand);
 }
 
 @media (min-width: 640px) {

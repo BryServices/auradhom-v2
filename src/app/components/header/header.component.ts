@@ -1,5 +1,5 @@
 import { Component, inject, signal, effect } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { CartService } from '../../services/cart.service';
@@ -7,7 +7,7 @@ import { CartService } from '../../services/cart.service';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, RouterLink, RouterLinkActive, LucideAngularModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
