@@ -31,14 +31,13 @@ export class GalleryService {
 
   private initializeData(): void {
     // Load images from the gallery folder
-    // This array is manually updated when images are added/removed
+    // Update this array when images are added/removed from src/galery/
     const imageFilenames = [
       '1.jpg',
       '2.jpg',
       '3.jpg',
       '4.jpg',
       '5.jpg',
-      'cover2.jpg',
       'im1.png',
       'im2.jpeg',
       'img (1).jpeg',
