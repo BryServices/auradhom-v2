@@ -132,3 +132,41 @@
     font-size: 3rem;
   }
 }
+
+/* Large screen: 1440px and up */
+@media (min-width: 1440px) {
+  .hero-container {
+    min-height: calc(100vh - 200px);
+    padding: 60px 20px;
+  }
+
+  .hero-content {
+    padding: 60px 40px;
+    max-width: 1000px;
+  }
+
+  .hero-content h1 {
+    font-size: 3.5rem;
+    letter-spacing: 5px;
+    margin-bottom: 24px;
+  }
+
+  .hero-content p {
+    font-size: 1.4rem;
+    margin-bottom: 56px;
+    line-height: 1.6;
+  }
+
+  .cta-button {
+    padding: 16px 40px;
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    min-height: 48px;
+  }
+
+  .cta-button:hover {
+    background: rgba(216, 210, 201, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+}
