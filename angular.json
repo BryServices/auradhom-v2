@@ -46,6 +46,11 @@
                   "glob": "favicon.png",
                   "input": "src",
                   "output": "/"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "src/galery",
+                  "output": "/galery"
                 }
               ],
               "index": "src/index.html",

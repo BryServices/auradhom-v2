@@ -32,6 +32,13 @@ export class GalleryComponent implements OnInit {
   ngOnInit(): void {
     this.categories = this.galleryService.getCategories();
     this.load();
+    
+    // Debug: log image paths
+    const res = this.galleryService.fetch(1, 5);
+    console.log('Gallery Debug - First 5 images:');
+    res.items.forEach(img => {
+      console.log(`  ${img.title} → ${img.url}`);
+    });
   }
 
   load(reset = true) {
