@@ -1,41 +1,98 @@
-<div class="cart-container container fade-in">
-  <h1>Panier</h1>
+<div class="cart-container container fade-in" id="main-content" role="main">
+  <div class="cart-header">
+    <h1>Panier</h1>
+    <p class="cart-subtitle">{{ items().length }} article(s)</p>
+  </div>
 
   @if(items().length === 0) {
-    <p>Votre panier est vide.</p>
-    <a routerLink="/collection" class="link">Continuer mes achats</a>
+    <div class="empty-cart">
+      <p class="empty-message">Votre panier est vide.</p>
+      <p class="empty-hint">Commencez par ajouter des articles à votre panier.</p>
+      <a routerLink="/collection" class="link btn-continue">Continuer mes achats</a>
+    </div>
   } @else {
     <ul class="cart-list">
       @for (item of items(); track item.slug + item.size + item.color) {
         <li class="cart-item">
-          <img [src]="item.image" [alt]="item.name">
+          <div class="item-image">
+            <img [src]="item.image" [alt]="item.name" loading="lazy">
+          </div>
           <div class="meta">
-            <p class="name">{{ item.name }}</p>
+            <a [routerLink]="['/produit', item.slug]" class="item-name">{{ item.name }}</a>
             <p class="sub">Taille {{ item.size }} • {{ item.color }}</p>
             <div class="qty">
-              <button class="qty-btn" (click)="decrement($index)" aria-label="Diminuer">−</button>
-              <input type="number" min="1" [value]="item.quantity" (input)="onQtyInput($index, $event)" aria-label="Quantité">
-              <button class="qty-btn" (click)="increment($index)" aria-label="Augmenter">+</button>
+              <button 
+                class="qty-btn" 
+                (click)="decrement($index)" 
+                [disabled]="item.quantity <= 1"
+                aria-label="Diminuer la quantité"
+                title="Diminuer">−</button>
+              <input 
+                type="number" 
+                min="1" 
+                [value]="item.quantity" 
+                (input)="onQtyInput($index, $event)" 
+                aria-label="Quantité du produit"
+                class="qty-input">
+              <button 
+                class="qty-btn" 
+                (click)="increment($index)" 
+                aria-label="Augmenter la quantité"
+                title="Augmenter">+</button>
             </div>
           </div>
-          <div class="price">{{ (item.price * item.quantity) | formatFcfa }}</div>
-          <button class="remove" (click)="remove($index)">Supprimer</button>
+          <div class="item-price">
+            <span class="price-label">Prix</span>
+            <span class="price-value">{{ (item.price * item.quantity) | formatFcfa }}</span>
+          </div>
+          <button 
+            class="remove" 
+            (click)="confirmRemove($index)"
+            aria-label="Supprimer cet article du panier"
+            title="Supprimer">
+            🗑️
+          </button>
         </li>
       }
     </ul>
 
     <div class="cart-footer">
-      <a routerLink="/collection" class="continue">Continuer mes achats</a>
+      <a routerLink="/collection" class="continue">← Continuer mes achats</a>
       <div class="summary">
-        <div class="row">
-          <span>Livraison</span>
-          <strong>0 FCFA</strong>
+        <div class="summary-row">
+          <span class="summary-label">Sous-total</span>
+          <strong class="summary-value">{{ (total() | formatFcfa) }}</strong>
         </div>
-        <div class="row total-row">
-          <span>Total</span>
-          <strong>{{ total() | formatFcfa }}</strong>
+        <div class="summary-row">
+          <span class="summary-label">Livraison</span>
+          <strong class="summary-value">0 FCFA</strong>
         </div>
-        <button class="checkout" (click)="proceedToCheckout()">Commander</button>
+        <div class="summary-row total-row">
+          <span class="total-label">Total</span>
+          <strong class="total-value">{{ total() | formatFcfa }}</strong>
+        </div>
+        <button 
+          class="checkout" 
+          (click)="proceedToCheckout()"
+          [disabled]="items().length === 0"
+          aria-label="Procéder à la commande">
+          Commander maintenant
+        </button>
+        <p class="checkout-hint">Sécurisé et simple via WhatsApp</p>
+      </div>
+    </div>
+  }
+
+  <!-- Confirmation dialog -->
+  @if(showRemoveConfirm) {
+    <div class="modal-overlay" (click)="cancelRemove()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <h3>Confirmer la suppression</h3>
+        <p>Êtes-vous sûr de vouloir supprimer cet article du panier ?</p>
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="cancelRemove()">Annuler</button>
+          <button class="btn-confirm" (click)="confirmRemoveProduct()">Supprimer</button>
+        </div>
       </div>
     </div>
   }

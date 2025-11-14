@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
@@ -22,8 +22,30 @@ export class CartComponent {
   items = this.cart.getItems();
   total = this.cart.total;
 
+  // Confirmation dialog state
+  showRemoveConfirm = false;
+  removeConfirmIndex: number | null = null;
+
   remove(index: number) { this.cart.remove(index); }
   clear() { this.cart.clear(); }
+
+  confirmRemove(index: number) {
+    this.removeConfirmIndex = index;
+    this.showRemoveConfirm = true;
+  }
+
+  cancelRemove() {
+    this.showRemoveConfirm = false;
+    this.removeConfirmIndex = null;
+  }
+
+  confirmRemoveProduct() {
+    if (this.removeConfirmIndex !== null) {
+      this.cart.remove(this.removeConfirmIndex);
+      this.showRemoveConfirm = false;
+      this.removeConfirmIndex = null;
+    }
+  }
 
   proceedToCheckout() {
     const cartItems = this.items();
