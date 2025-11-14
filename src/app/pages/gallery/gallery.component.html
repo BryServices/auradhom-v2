@@ -1,0 +1,68 @@
+<div class="gallery-page container">
+  <header class="gallery-header">
+    <div class="gallery-head-inner">
+      <h1 class="gallery-title">Galerie</h1>
+      <p class="gallery-subtitle">Une sélection d'images — minimaliste, premium et responsive.</p>
+    </div>
+  </header>
+
+  <section class="gallery-controls">
+    <div class="top-filters">
+      <div class="filter-group">
+        <label class="sr-only">Recherche</label>
+        <input type="search" class="search-input" placeholder="Rechercher..." [(ngModel)]="q" (ngModelChange)="onSearch()" aria-label="Recherche galerie">
+      </div>
+
+      <div class="filter-group">
+        <select class="select" [value]="category" (change)="changeCategory($any($event.target).value)" aria-label="Catégorie">
+          <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <select class="select" [value]="sort" (change)="changeSort($any($event.target).value)" aria-label="Trier">
+          <option value="newest">Les plus récents</option>
+          <option value="most_viewed">Les plus vus</option>
+          <option value="featured">Mis en avant</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn clear-btn" (click)="resetFilters()" aria-label="Réinitialiser filtres">Réinitialiser</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="gallery-grid-wrapper">
+    <div class="grid-stats">{{ total }} image(s)</div>
+
+    <div class="gallery-grid">
+      <div *ngFor="let img of images; let i = index" class="gallery-card" (click)="openLightbox(i)" role="button" tabindex="0" (keyup.enter)="openLightbox(i)">
+        <div class="img-wrap">
+          <img [src]="img.thumb" [alt]="img.alt || img.title" loading="lazy">
+        </div>
+        <div class="card-meta">
+          <div class="card-title">{{ img.title }}</div>
+          <div class="card-sub">{{ img.category }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="load-more-wrap" *ngIf="page < totalPages">
+      <button class="btn load-more" (click)="loadMore()">Voir plus</button>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" *ngIf="lightboxOpen" (click)="closeLightbox()" role="dialog" aria-modal="true">
+    <div class="lightbox-inner" (click)="$event.stopPropagation()">
+      <button class="lightbox-close" (click)="closeLightbox()" aria-label="Fermer">✕</button>
+      <button class="lightbox-prev" (click)="prev()" aria-label="Précédent">‹</button>
+      <div class="lightbox-image">
+        <img [src]="images[currentIndex]?.url" [alt]="images[currentIndex]?.alt || images[currentIndex]?.title">
+        <div class="lightbox-caption">{{ images[currentIndex]?.title }}</div>
+      </div>
+      <button class="lightbox-next" (click)="next()" aria-label="Suivant">›</button>
+    </div>
+  </div>
+</div>

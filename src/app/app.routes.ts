@@ -35,6 +35,10 @@ export const APP_ROUTES: Routes = [
     loadComponent: () => import('./pages/customer-info/customer-info.component').then(c => c.CustomerInfoComponent)
   },
   {
+    path: 'galerie',
+    loadComponent: () => import('./pages/gallery/gallery.component').then(c => c.GalleryComponent)
+  },
+  {
     path: 'customer-info',
     loadComponent: () => import('./pages/customer-info/customer-info.component').then(c => c.CustomerInfoComponent)
   },
